@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import GaugeComponent from './Gauge'
 import { Button } from "@/components/ui/button"
@@ -44,23 +44,35 @@ const sampleRecipe: Recipe = {
 }
 
 function App() {
-  const [recipe] = useState<Recipe>(sampleRecipe);
 
+  
+  const [currentUrl, setCurrentUrl] = useState('');
+  const [recipe] = useState<Recipe>(sampleRecipe);
   const { user } = useAuth();
 
+  useEffect(() => {
+    // Query the active tab and get its URL
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        if (tabs[0]) {
+            setCurrentUrl(tabs[0].url  ?? '');
+        }
+    });
+  }, []);
+
   return (
-    <Card className="w-[350px] p-0 rounded-none dark">
+    <Card className="w-[350px] p-0 rounded-none bg-emerald-900">
+      
       {user ? (
         <>
           <CardHeader>
-            <CardTitle>{recipe.title}</CardTitle>
-            <CardDescription>{recipe.description}</CardDescription>
+            <CardTitle className="text-white">{recipe.title}</CardTitle>
+            <CardDescription className="text-gray-300">{recipe.description}</CardDescription>
           </CardHeader>
           <CardContent>
             <GaugeComponent value={recipe.ecoScore || 0} />
             <div className="mt-4 space-y-2">
               <div className="text-sm">
-              <span className="font-semibold mb-2 block">Ingredient Scores:</span>
+              <span className="font-semibold mb-2 block text-white">Ingredient Scores:</span>
                 {recipe.sanitizedIngredients.map((ingredient, index) => (
                   <IngredientScoreBar
                     key={index}
@@ -69,14 +81,14 @@ function App() {
                   />
                 ))}
               </div>
-              <div className="text-sm">
+              <div className="text-sm text-white">
                 <span className="font-semibold">Rating:</span> {recipe.rating}/5
               </div>
             </div>
           </CardContent>
           <CardFooter className="flex justify-between">
-            <Button variant="outline">View Details</Button>
-            <Button>Save Recipe</Button>
+            <Button className="bg-emerald-700 text-white p-2 rounded-md w-25 self-center hover:bg-emerald-900">View Details</Button>
+            <Button className="bg-emerald-700 text-white p-2 rounded-md w-25 self-center hover:bg-emerald-900">Save Recipe</Button>
             <SignOutButton />
           </CardFooter>
         </>
