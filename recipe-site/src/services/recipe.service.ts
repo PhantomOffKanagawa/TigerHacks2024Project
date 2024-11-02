@@ -18,14 +18,14 @@ const mockRecipes: Recipe[] = [{
         instructions_list: ['chase down goose', 'cook fish'],
         ingredient_groups: [{
             purpose: null,
-            ingredients: ['1 goose', '1 fish']
+            ingredients: ['1 goose', '1 fish', '1 beef']
         }],
         cook_time: 30,
         site_name: 'example.com',
         ratings: 92,
         yields: '1',
         host: 'example.com',
-        ingredients: ['1 goose', '1 fish'],
+        ingredients: ['1 goose', '1 fish', '1 beef'],
         category: 'main',
         ratings_count: 100,
         total_time: 60,
@@ -37,6 +37,9 @@ const mockRecipes: Recipe[] = [{
         }, {
             name: 'fish',
             ecoScore: 60
+        }, {
+            name: 'beef',
+            ecoScore: 20
         }]
     },
     {
