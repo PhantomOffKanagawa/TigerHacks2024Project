@@ -34,14 +34,13 @@ function countMatchingWords(text, reference) {
 
 const ing_co2 = {}
 
-for (let ing of ingredients) {
+const getCO2ByIngredient = (ing) => {
   console.log(`Searching ingredient ${ing}`)
   const tallies = foods.map(food => ({food, matches: countMatchingWords(ing, food)})).sort((a,b) => b.matches - a.matches)
   const val = tallies[0].matches
   if (val === 0) {
     console.log(ing + ' not found!')
-    ing_co2[ing.toUpperCase()] = -1
-    continue
+    return -1
   }
   const maxes = [tallies[0]]
   for (let i = 1; i < tallies.length; i++) {
@@ -65,17 +64,22 @@ for (let ing of ingredients) {
     const result = fuse.search(ing)
     if (!result.length) {
       console.log(`${ing} has no results... using ${maxes[0].food}`)
-      continue; 
+      return co2_data[maxes[0].food]
     }
     const {item, score} = result[0]
     console.log(`Best fuzzy search result is ${item} with score ${score}`)
     console.log(`${item} has co2 emissions of ${co2_data[item]}`)
-    ing_co2[item] = co2_data[item]
+    return co2_data[item]
   } else {
     
     console.log(`${exactMatch} has co2 emissions of ${co2_data[exactMatch]}`)
-    ing_co2[exactMatch] = co2_data[exactMatch]
+    return co2_data[exactMatch]
   }
+
+}
+
+for (let ing of ingredients) {
+  ing_co2[ing] = getCO2ByIngredient(ing)
 }
 
 console.log(JSON.stringify(ing_co2, null, 2))

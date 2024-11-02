@@ -37,20 +37,67 @@ const allFoods = JSON.parse(fs.readFileSync('./gh_ings.json', 'utf8'))['foods'];
 //const allFoods = JSON.parse(fs.readFileSync('./ingredient_list.json', 'utf8'))['foods'];
 // console.log(allFoods)
 
-const fuse = new Fuse(allFoods, {
-  includeScore: true
-})
 
-// const result = fuse.search('packed light brown sugar')
-for (let ing of trimmed) {
+function countMatchingWords(text, reference) {
+    // Convert both strings to lowercase and split into words
+    const textWords = text.toLowerCase().split(/\s+/);
+    const referenceWords = new Set(reference.toLowerCase().split(/\s+/)); // Use a Set for efficient lookup
+
+    // Count words in `textWords` that appear in `referenceWords`
+    let count = 0;
+    for (const word of textWords) {
+        if (referenceWords.has(word)) {
+            count++;
+        }
+    }
+
+    return count
+}
+
+function sanitizeIngredient(inge) {
+  const ing = simplifyIngredient(inge)
+  console.log(ing)
+
+  const tallies = allFoods.map(food => ({food, matches: countMatchingWords(ing, food)})).sort((a,b) => b.matches - a.matches)
+  const val = tallies[0].matches
+  if (val === 0) {
+    console.log(ing + ' not found!')
+    return -1
+  }
+  const maxes = [tallies[0]]
+  //console.log(`maxes: ${JSON.stringify(maxes)}`)
+  for (let i = 1; i < tallies.length; i++) {
+    if (tallies[i].matches === val) {
+      maxes.push(tallies[i])
+    }
+  }
+  //console.log(`Maxes: ${maxes.map(JSON.stringify)}`)
+  for (let match of maxes) {
+    //console.log(ing, match.food.toLowerCase())
+    if (ing === match.food.toLowerCase()) { // If exact match
+      console.log(`Exact match with ${match.food}`)
+      return match.food.toLowerCase()
+    }
+  }
+
+  const fuse = new Fuse(maxes.map(m => m.food), {
+    includeScore: true
+  })
   const result = fuse.search(ing)
   if (!result.length) {
     console.log(ing + " has no results")
-    continue;
+    return null
   }
-  console.log(result[0])
+  console.log(`Found ${result[0].item} through fuzzy search`)
+  return result[0].item
 }
-// console.log(result)
+
+const sanitized = []
+for (let ing of ingredients) {
+  sanitized.push(sanitizeIngredient(ing))
+}
+
+console.log(`Sanitized: ${sanitized}`)
 
 export {}
 
