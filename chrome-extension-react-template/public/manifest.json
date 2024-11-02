@@ -6,5 +6,8 @@
     "action": {
       "default_popup": "index.html"
     },
-    "permissions": ["identity"]
-  }
+    "permissions": ["identity", "offscreen"],
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self'"
+    }
+}

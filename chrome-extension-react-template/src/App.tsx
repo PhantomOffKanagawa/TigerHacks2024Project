@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card"
 import { Recipe } from './types/recipe'
 import IngredientScoreBar from './components/ui/IngredientScoreBar'
-import SignInButton from "./components/SignInButton.tsx";
+import SignIn from "./components/SignIn.tsx";
 import {useAuth} from "./contexts/AuthContext.tsx";
 import SignOutButton from "./components/SignOutButton.tsx";
 
@@ -82,8 +82,7 @@ function App() {
         </>
       ) : (
           <div>
-            <h1>Please sign in</h1>
-            <SignInButton />
+            <SignIn />
           </div>
       )
       }
