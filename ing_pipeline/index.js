@@ -16,36 +16,35 @@ async function getCarbonScoresByURL(url) {
   let scrapedData = null
   if (response.ok) {
     scrapedData = await response.json()
-    console.log(scrapedData)
+    //console.log(scrapedData)
   } else {
     console.warn(`${url} did not respond`)
     return
   }
 
-  //const scrapedData = JSON.parse(fs.readFileSync('./response.json', 'utf8'));
-  //const scrapedData = JSON.parse(fs.readFileSync('./chicken_response.json', 'utf8'));
-  //const scrapedData = JSON.parse(fs.readFileSync('./pasta_response.json', 'utf8'));
-
   const { ingredients } = scrapedData
 
-  console.log('Raw ingredients')
-  console.log(ingredients)
+  //console.log('Raw ingredients')
+  //console.log(ingredients)
 
   const sanitized = sanitizeIngredients(ingredients)
 
-  console.log('Sanitized ingredients')
-  console.log(sanitized)
+  //console.log('Sanitized ingredients')
+  //console.log(sanitized)
 
   const carbonData = sanitized.map(ingredient => ({ingredient, carbonScore: getCarbonScore(ingredient)}))
-  console.log(carbonData)
-
+  //console.log(carbonData)
+  return carbonData
   
 }
 
 
-getCarbonScoresByURL('https://pinchofyum.com/the-best-soft-chocolate-chip-cookies')
+async function test() {
+  const carbonData = await getCarbonScoresByURL('https://pinchofyum.com/the-best-soft-chocolate-chip-cookies')
+  console.log(carbonData)
+}
 
-
+test()
 
 export {}
 
