@@ -15,27 +15,25 @@ const RecipeDetail: FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // Get all recipes
-  const { recipes, loading, error, refreshRecipes } = useRecipes('mock-user-id');
+  // Get recipe data
+  const { recipe, loading, error, refreshRecipe } = useRecipes('mock-user-id', id);
 
-  // State for substitutes and substitutes modal
+  console.log(recipe);
+
+  // State for substitutes and substitutes modal 
   const [showSubstitutes, setShowSubstitutes] = useState(false);
   const [ingredientToSubstitute, setIngredientToSubstitute] = useState(null);
 
   if (loading) {
-    // return <LoadingSpinner />;
+    return <LoadingSpinner />;
   }
 
   if (error) {
-    // return <ErrorDisplay message={error.message} onRetry={refreshRecipes} />;
+    return <ErrorDisplay message={error.message} onRetry={() => refreshRecipe(id || '')} />;
   }
 
-  // Get with ID
-  // TODO: Firebase only retrieve this recipe?
-  const recipe = recipes.find((r) => r.id === parseInt(id || ''));
-
   if (!recipe) {
-    return <ErrorDisplay message="Recipe not found" onRetry={refreshRecipes} />;
+    return <ErrorDisplay message="Recipe not found" onRetry={() => refreshRecipe(id || '')} />;
   }
 
   return (
