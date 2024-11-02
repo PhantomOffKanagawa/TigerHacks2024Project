@@ -1,24 +1,33 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
-import { Recipe } from '@/types/recipe';
 
 import { useRecipes } from '@/hook/useRecipes';
 import { LoadingSpinner } from '@/components/custom/loading';
 import { ErrorDisplay } from '@/components/custom/error';
 import { Header } from '@/components/custom/header';
+import { Skeleton } from 'components/ui/skeleton';
+import { Checkbox } from 'components/ui/checkbox';
+import { Button } from 'components/ui/button';
+import { Info } from 'lucide-react';
+import { Dialog, DialogDescription, DialogTitle, DialogHeader, DialogContent, DialogTrigger } from 'components/ui/dialog';
 const RecipeDetail: FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  // Get all recipes
   const { recipes, loading, error, refreshRecipes } = useRecipes('mock-user-id');
 
+  // State for substitutes and substitutes modal
+  const [showSubstitutes, setShowSubstitutes] = useState(false);
+  const [ingredientToSubstitute, setIngredientToSubstitute] = useState(null);
+
   if (loading) {
-    return <LoadingSpinner />;
+    // return <LoadingSpinner />;
   }
 
   if (error) {
-    return <ErrorDisplay message={error.message} onRetry={refreshRecipes} />;
+    // return <ErrorDisplay message={error.message} onRetry={refreshRecipes} />;
   }
 
   // Get with ID
@@ -30,7 +39,7 @@ const RecipeDetail: FC = () => {
   }
 
   return (
-    <div className="bg-gray-800 min-h-screen">
+    <div className="bg-background min-h-screen">
       <Header />
       <div className="max-w-4xl mx-auto py-12 px-6">
         <button 
@@ -40,10 +49,10 @@ const RecipeDetail: FC = () => {
           ← Back to Recipes
         </button>
         
-        <Card className="bg-gray-800 p-8 rounded-lg">
-          <h1 className="text-4xl font-bold text-white mb-4">{recipe.title}</h1>
+        <Card className="p-8 rounded-lg">
+          <h1 className="text-4xl font-bold text-white mb-4 font-display">{recipe.title}</h1>
           <div className="space-y-6">
-            <div className="aspect-video bg-gray-700 rounded-lg" />
+            <Skeleton className="aspect-video bg-gray-700/20 rounded-lg" />
             
             <div className="flex items-center space-x-4 text-gray-400">
               <span>By {recipe.author}</span>
@@ -72,7 +81,49 @@ const RecipeDetail: FC = () => {
               <h2 className="text-2xl font-semibold text-white mb-3">Ingredients</h2>
               <ul className="list-disc list-inside text-gray-300">
                 {recipe.ingredients.map((ingredient: string, index: number) => (
-                  <li key={index}>{ingredient}</li>
+                  <li key={index} className="flex items-center space-x-2">
+                    <Checkbox className="text-green-400 me-2" />
+                    {ingredient}
+                    <div className="flex-1"></div>
+                    {/* TODO: Rework datastructure to include original ingredient name with score normalized ingredients */}
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="ghost" size="icon" className="w-14 p-0 text-gray-400 ml-auto text-right underline">
+                          {recipe.sanitizedIngredients[index].ecoScore}
+                          <Info className="w-4 h-4" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                          <DialogTitle>Substitute {recipe.sanitizedIngredients[index].name}</DialogTitle>
+                          <DialogDescription>
+                            Choose a more eco-friendly alternative
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          {/* TODO: Replace with real substitutes look up */}
+                          {[
+                            { name: 'Tofu', ecoScore: 85 },
+                            { name: 'Tempeh', ecoScore: 80 },
+                            { name: 'Seitan', ecoScore: 75 }
+                          ].map(sub => (
+                            <div key={sub.name} className="flex items-center justify-between p-2 hover:bg-gray-700/10 rounded">
+                              <span>{sub.name}</span>
+                              <div className="flex items-center gap-2">
+                                <span className={`${sub.ecoScore > recipe.sanitizedIngredients[index].ecoScore ? 'text-green-500' : 'text-red-500'}`}>
+                                  {sub.ecoScore > recipe.sanitizedIngredients[index].ecoScore ? '↑' : '↓'}
+                                  {Math.abs(sub.ecoScore - recipe.sanitizedIngredients[index].ecoScore)}
+                                </span>
+                                <Button variant="outline" size="sm">
+                                  Use This
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </li>
                 ))}
               </ul>
             </div>

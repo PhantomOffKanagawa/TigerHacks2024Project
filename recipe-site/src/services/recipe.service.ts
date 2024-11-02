@@ -5,36 +5,36 @@ import {
 // This will be replaced with Firebase implementation later
 const mockRecipes: Recipe[] = [{
         id: 1,
-        title: 'Vegetarian Lasagna 1',
-        image: 'https://example.com/lasagna.jpg',
+        title: 'Red Herring 1',
+        image: 'https://example.com/red-herring.jpg',
         prep_time: 30,
         author: 'John Doe',
-        cuisine: 'Italian',
-        description: 'A delicious plant-based version of the classic Italian dish',
+        cuisine: 'Innocuous',
+        description: 'A suspiciously innocuous recipe with no discernible meaning',
         language: 'English',
-        instructions: 'make pasta, cook pasta',
-        instructions_list: ['make pasta', 'cook pasta'],
+        instructions: 'chase down goose, cook fish',
+        instructions_list: ['chase down goose', 'cook fish'],
         ingredient_groups: [{
             purpose: null,
-            ingredients: ['1 cup pasta', '1 cup tomato sauce']
+            ingredients: ['1 goose', '1 fish']
         }],
         cook_time: 30,
         site_name: 'example.com',
         ratings: 92,
         yields: '1',
         host: 'example.com',
-        ingredients: ['1 cup pasta', '1 cup tomato sauce'],
+        ingredients: ['1 goose', '1 fish'],
         category: 'main',
         ratings_count: 100,
         total_time: 60,
         ecoScore: 20,
         rating: 3,
         sanitizedIngredients: [{
-            name: 'pasta',
+            name: 'goose',
             ecoScore: 20
         }, {
-            name: 'tomato sauce',
-            ecoScore: 20
+            name: 'fish',
+            ecoScore: 60
         }]
     },
     {

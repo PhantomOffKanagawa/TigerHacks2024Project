@@ -31,8 +31,8 @@ export const useRecipes = (userId: string): UseRecipesReturn => {
     }
   };
 
-  if (Math.random() < 0.25) {
-    setError(new Error('Failed to fetch recipes (Random 1/4 chance)'));
+  if (Math.random() < 0.1) {
+    setError(new Error('Failed to fetch recipes (Random 1/10 chance)'));
   }
 
   // Initial fetch
