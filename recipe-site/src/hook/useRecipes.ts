@@ -4,13 +4,16 @@ import { RecipeService } from '@/services/recipe.service';
 
 interface UseRecipesReturn {
   recipes: Recipe[];
+  recipe: Recipe | null;
   loading: boolean;
   error: Error | null;
   refreshRecipes: () => Promise<void>;
+  refreshRecipe: (recipeId: string) => Promise<void>;
 }
 
-export const useRecipes = (userId: string): UseRecipesReturn => {
+export const useRecipes = (userId: string, recipeId?: string): UseRecipesReturn => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -31,19 +34,48 @@ export const useRecipes = (userId: string): UseRecipesReturn => {
     }
   };
 
+  const fetchRecipe = async (recipeId: string | undefined) => {
+    try {
+      setLoading(true);
+      if (!recipeId) {
+        setError(new Error('Recipe ID is undefined'));
+        return;
+      }
+      setError(null);
+      const recipe = await RecipeService.getRecipeById(recipeId);
+      await new Promise(
+        resolve => setTimeout(resolve, 500)
+      );
+      setRecipe(recipe || null);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to fetch recipe'));
+      console.error('Error fetching recipe:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (Math.random() < 0.1) {
     setError(new Error('Failed to fetch recipes (Random 1/10 chance)'));
   }
 
+
+
   // Initial fetch
   useEffect(() => {
-    fetchRecipes();
-  }, [userId]);
+    if (recipeId) {
+      fetchRecipe(recipeId);
+    } else {
+      fetchRecipes();
+    }
+  }, [userId, recipeId]);
 
   return {
     recipes,
+    recipe,
     loading,
     error,
-    refreshRecipes: fetchRecipes
+    refreshRecipes: fetchRecipes,
+    refreshRecipe: fetchRecipe
   };
 };

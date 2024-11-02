@@ -10,7 +10,7 @@ import { ErrorDisplay } from '@/components/custom/error';
 import { Header } from '@/components/custom/header';
 
 const RecipeList: FC = () => {
-  const { recipes, loading, error, refreshRecipes } = useRecipes('mock-user-id');
+  const { recipes, loading, error, refreshRecipes } = useRecipes('example_user');
 
   if (loading) {
     return <LoadingSpinner />;

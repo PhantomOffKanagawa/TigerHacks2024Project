@@ -40,17 +40,17 @@ const Auth: React.FC = () => {
     };
 
     return (
-        <div>
-            <h2>{isSignUp ? "Sign Up" : "Sign In"}</h2>
-            <form onSubmit={handleSubmit}>
-                <input
+        <div className="bg-gray-800 text-white rounded-lg shadow-lg p-4 max-w-md">
+            <h2 className="text-center p-2">{isSignUp ? "Sign Up" : "Sign In"}</h2>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-1">
+                <input className="border border-gray-300 rounded-md p-2 items-start w-2/3 self-center"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Email"
                     required
                 />
-                <input
+                <input className="border border-gray-300 rounded-md p-2 items-start w-2/3 self-center"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -66,7 +66,7 @@ const Auth: React.FC = () => {
                         required
                     />
                 )}
-                <button type="submit" disabled={loading}>
+                <button type="submit" disabled={loading} className="bg-emerald-900 text-white p-2 rounded-md w-20 self-center">
                     {loading ? (isSignUp ? 'Signing Up...' : 'Signing In...') : (isSignUp ? 'Sign Up' : 'Sign In')}
                 </button>
             </form>

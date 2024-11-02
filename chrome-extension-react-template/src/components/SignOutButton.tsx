@@ -6,6 +6,7 @@ const SignOutButton: React.FC = () => {
         try {
             const result = await signOutApp();
             console.log(result);
+            window.close();
         } catch (error) {
             console.error('Error signing out:', error);
         }

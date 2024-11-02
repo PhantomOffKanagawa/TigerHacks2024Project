@@ -1,7 +1,12 @@
+import { useRecipes } from '@/hook/useRecipes';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Homepage: React.FC = () => {
+  const { recipes, loading, error, refreshRecipes } = useRecipes('mock-user-id');
+
+  console.log(recipes);
+
   return (
     <main className="min-h-screen bg-[#004D40] text-white px-6 lg:px-20">
       <nav className="flex justify-between items-center py-4">
