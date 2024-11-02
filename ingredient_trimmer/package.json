@@ -9,5 +9,8 @@
   },
   "author": "Zack Murry",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "fuse.js": "^7.0.0"
+  }
 }
