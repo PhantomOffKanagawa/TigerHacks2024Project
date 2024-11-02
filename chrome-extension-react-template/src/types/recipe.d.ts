@@ -42,6 +42,8 @@ export interface RecipeData {
     ratings_count: number;
     total_time: number;
     ingredient_groups: IngredientGroup[];
+    ecoScore?: number;
+    sanitizedIngredients: sanitizedIngredient[];
 }
 
 export interface sanitizedIngredient {

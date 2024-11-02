@@ -47,6 +47,8 @@ export interface RecipeData {
 export interface sanitizedIngredient {
     name: string;
     ecoScore: number;
+    original?: string;
+    originalEcoScore?: number;
 }
 
 export interface Recipe extends RecipeData {

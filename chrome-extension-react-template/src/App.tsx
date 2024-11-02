@@ -10,15 +10,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Recipe } from './types/recipe'
-import IngredientScoreBar from './components/ui/IngredientScoreBar'
+import { RecipeData } from './types/recipe'
+// import IngredientScoreBar from './components/ui/IngredientScoreBar'
 import Auth from "./components/Auth.tsx";
 import {useAuth} from "./contexts/AuthContext.tsx";
 import SignOutButton from "./components/SignOutButton.tsx";
 import websiteData from './websites.json';
 
-const sampleRecipe: Recipe = {
-  id: 1,
+let first = true;
+
+const sampleRecipe: RecipeData = {
   title: 'Vegetarian Lasagna',
   image: 'https://example.com/lasagna.jpg',
   prep_time: 30,
@@ -31,15 +32,14 @@ const sampleRecipe: Recipe = {
   ingredient_groups: [{purpose: null, ingredients: ['1 cup pasta', '1 cup tomato sauce']}],
   cook_time: 30,
   site_name: 'example.com',
-  ratings: 92,
+  ratings_count: 92,
   yields: '1',
   host: 'example.com',
   ingredients: ['1 cup pasta', '1 cup tomato sauce'],
   category: 'main',
-  ratings_count: 100,
   total_time: 60,
   ecoScore: 20,
-  rating: 3,
+  ratings: 3,
   sanitizedIngredients: [{name: 'pasta', score: 20}, {name: 'tomato sauce', score: 20}]
 }
 
@@ -47,10 +47,9 @@ function App() {
 
   
   const [currentUrl, setCurrentUrl] = useState('');
-  const [recipe] = useState<Recipe>(sampleRecipe);
+  const [recipe, setRecipe] = useState(sampleRecipe);
   const { user } = useAuth();
   const validUrls = websiteData.websites;
-  
 
   useEffect(() => {
     // Query the active tab and get its URL
@@ -69,13 +68,12 @@ function App() {
   });
 
 
-  if(isUrl){
+  if(isUrl && first){
     fetch("https://scgcplb7osrk65nbxgnzp43cz40jekxj.lambda-url.us-east-2.on.aws/", {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
+      method: 'POST',
+      body: JSON.stringify({
         "url":currentUrl
-      }
+      })
     })
     .then(res => {
       if (!res.ok) {
@@ -85,6 +83,8 @@ function App() {
     })
     .then(data => {
       console.log(data);
+      first = false;
+      setRecipe(data);
     })
     .catch(error => {
       console.error('Error fetching recipe:', error);
@@ -114,16 +114,16 @@ function App() {
             <div className="mt-4 space-y-2">
               <div className="text-sm">
               <span className="font-semibold mb-2 block text-white">Ingredient Scores:</span>
-                {recipe.sanitizedIngredients.map((ingredient, index) => (
+                {/* {recipe.sanitizedIngredients.map((ingredient, index) => (
                   <IngredientScoreBar
                     key={index}
                     name={ingredient.name}
                     score={ingredient.score}
                   />
-                ))}
+                ))} */}
               </div>
               <div className="text-sm text-white">
-                <span className="font-semibold">Rating:</span> {recipe.rating}/5
+                <span className="font-semibold">Rating:</span> {recipe.ratings}/5
               </div>
             </div>
           </CardContent>
