@@ -1,18 +1,17 @@
 import { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
+import SignOutButton from './SignOutButton';
 
 interface HeaderProps {
-  isLoggedIn?: boolean;
-  onLogout?: () => void;
+  showLogins?: boolean;
 }
 
-export const Header: FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
+export const Header: FC<HeaderProps> = ({ showLogins = true }) => {
   const navigate = useNavigate();
 
-  onLogout = () => {
-    alert('Logout');
-  }
+  const { user } = useAuth();
 
   return (
     <header className="bg-emerald-900 py-4 px-6 shadow-lg">
@@ -26,7 +25,7 @@ export const Header: FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
         </Button>
         
         <div className="space-x-2">
-          {!isLoggedIn ? (
+          {!user && showLogins ? (
             <>
               <Button
                 variant="outline"
@@ -42,15 +41,9 @@ export const Header: FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
                 Sign Up
               </Button>
             </>
-          ) : (
-            <Button
-              variant="outline"
-              className="text-white hover:text-gray-300"
-              onClick={onLogout}
-            >
-              Logout
-            </Button>
-          )}
+          ) : showLogins ? (
+            <SignOutButton />
+          ) : null}
         </div>
       </div>
     </header>
