@@ -1,10 +1,12 @@
 import {
     Recipe
 } from '@/types/recipe';
+import { db } from '@/config/firebase';
+import { collection, getDocs, addDoc, deleteDoc, doc, query, where, getDoc, updateDoc } from 'firebase/firestore';
 
 // This will be replaced with Firebase implementation later
 const mockRecipes: Recipe[] = [{
-        id: 1,
+        id: '1',
         title: 'Red Herring 1',
         image: 'https://example.com/red-herring.jpg',
         prep_time: 30,
@@ -38,7 +40,7 @@ const mockRecipes: Recipe[] = [{
         }]
     },
     {
-        id: 2,
+        id: '2',
         title: 'Vegetarian Lasagna 2',
         image: 'https://example.com/lasagna.jpg',
         prep_time: 30,
@@ -72,7 +74,7 @@ const mockRecipes: Recipe[] = [{
         }]
     },
     {
-        id: 3,
+        id: '3',
         title: 'Vegetarian Lasagna 3',
         image: 'https://example.com/lasagna.jpg',
         prep_time: 30,
@@ -106,7 +108,7 @@ const mockRecipes: Recipe[] = [{
         }]
     },
     {
-        id: 4,
+        id: '4',
         title: 'Vegetarian Lasagna 4',
         image: 'https://example.com/lasagna.jpg',
         prep_time: 30,
@@ -140,7 +142,7 @@ const mockRecipes: Recipe[] = [{
         }]
     },
     {
-        id: 5,
+        id: '5',
         title: 'Vegetarian Lasagna 5',
         image: 'https://example.com/lasagna.jpg',
         prep_time: 30,
@@ -174,7 +176,7 @@ const mockRecipes: Recipe[] = [{
         }]
     },
     {
-        id: 6,
+        id: '6',
         title: 'Vegetarian Lasagna 6',
         image: 'https://example.com/lasagna.jpg',
         prep_time: 30,
@@ -208,7 +210,7 @@ const mockRecipes: Recipe[] = [{
         }]
     },
     {
-        id: 7,
+        id: '7',
         title: 'Vegetarian Lasagna 7',
         image: 'https://example.com/lasagna.jpg',
         prep_time: 30,
@@ -242,7 +244,7 @@ const mockRecipes: Recipe[] = [{
         }]
     },
     {
-        id: 8,
+        id: '8',
         title: 'Vegetarian Lasagna 8',
         image: 'https://example.com/lasagna.jpg',
         prep_time: 30,
@@ -276,7 +278,7 @@ const mockRecipes: Recipe[] = [{
         }]
     },
     {
-        id: 9,
+        id: '9',
         title: 'Vegetarian Lasagna 9',
         image: 'https://example.com/lasagna.jpg',
         prep_time: 30,
@@ -314,33 +316,100 @@ const mockRecipes: Recipe[] = [{
 export const RecipeService = {
     // Get all recipes for a user
     getUserRecipes: async (userId: string): Promise < Recipe[] > => {
-        // This will be replaced with Firebase query
-        return mockRecipes;
+        try {
+            const recipesRef = collection(db, 'recipes');
+            const q = query(recipesRef, where('userId', '==', userId));
+            const querySnapshot = await getDocs(q);
+
+            // TODO: Worried about typing here
+            return querySnapshot.docs.map((doc) => ({
+                // TODO: Figure out if we need to store the id
+                // id: doc.id,
+                ...doc.data()
+              })) as Recipe[];
+        } catch (error) {
+            console.error('Error fetching recipes:', error);
+            throw new Error('Failed to fetch recipes');
+        }
     },
 
     // Get a single recipe by ID
-    getRecipeById: async (recipeId: number): Promise < Recipe | undefined > => {
-        // This will be replaced with Firebase query
-        return mockRecipes.find((recipe) => recipe.id === recipeId);
+    getRecipeById: async (recipeId: string): Promise < Recipe | undefined > => {
+        try {
+            const recipesRef = doc(db, 'recipes', recipeId.toString());
+            const recipeSnap = await getDoc(recipesRef);
+
+            if (!recipeSnap.exists()) {
+                return undefined;
+            }
+
+            return {
+                // id: recipeSnap.id,
+                ...recipeSnap.data()
+             } as Recipe;
+
+        } catch (error) {
+            console.error('Error fetching recipe:', error);
+            throw new Error('Failed to fetch recipe');
+        }
     },
 
     // Add a new recipe
+    // TODO: Decide if will every be used in production
     addRecipe: async (userId: string, recipe: Omit < Recipe, 'id' > ): Promise < Recipe > => {
-        // This will be replaced with Firebase add document
-        const newRecipe = {
-            ...recipe,
-            id: mockRecipes.length + 1,
-        };
-        mockRecipes.push(newRecipe);
-        return newRecipe;
+        try {
+            const recipesRef = collection(db, 'recipes');
+            const newRecipeData = {
+                ...recipe,
+                userId,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+            };
+
+            const docRef = await addDoc(recipesRef, newRecipeData);
+
+            return {
+                id: docRef.id,
+                ...newRecipeData
+            };
+        } catch (error) {
+            console.error('Error adding recipe:', error);
+            throw new Error('Failed to add recipe');
+        }
     },
 
     // Delete a recipe
     deleteRecipe: async (recipeId: number): Promise < void > => {
-        // This will be replaced with Firebase delete document
-        const index = mockRecipes.findIndex((recipe) => recipe.id === recipeId);
-        if (index > -1) {
-            mockRecipes.splice(index, 1);
+        try {
+            const recipeRef = doc(db, 'recipes', recipeId.toString());
+            await deleteDoc(recipeRef);
+        } catch (error) {
+            console.error('Error deleting recipe:', error);
+            throw new Error('Failed to delete recipe');
+        }
+    },
+
+    // Update a recipe
+    // TODO: Decide if will every be used in production
+    updateRecipe: async (recipeId: string, updates: Partial<Recipe>): Promise<Recipe> => {
+        try {
+            const recipeRef = doc(db, 'recipes', recipeId);
+            const updateData = {
+                ...updates,
+                updatedAt: new Date().toISOString(),
+            };
+
+            await updateDoc(recipeRef, updateData);
+
+            // Fetch and return the updated recipe
+            const updatedRecipe = await getDoc(recipeRef);
+            return {
+                id: updatedRecipe.id,
+                ...updatedRecipe.data()
+            } as Recipe;
+        } catch (error) {
+            console.error('Error updating recipe:', error);
+            throw new Error('Failed to update recipe');
         }
     }
 };

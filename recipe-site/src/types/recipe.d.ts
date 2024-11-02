@@ -50,7 +50,7 @@ export interface sanitizedIngredient {
 }
 
 export interface Recipe extends RecipeData {
-    id: number;
+    id: string;
     sanitizedIngredients: sanitizedIngredient[];
     ecoScore?: number;
     rating?: number;
