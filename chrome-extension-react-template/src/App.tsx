@@ -15,7 +15,7 @@ import IngredientScoreBar from './components/ui/IngredientScoreBar'
 import Auth from "./components/Auth.tsx";
 import {useAuth} from "./contexts/AuthContext.tsx";
 import SignOutButton from "./components/SignOutButton.tsx";
-
+import websiteData from './websites.json';
 
 const sampleRecipe: Recipe = {
   id: 1,
@@ -49,6 +49,8 @@ function App() {
   const [currentUrl, setCurrentUrl] = useState('');
   const [recipe] = useState<Recipe>(sampleRecipe);
   const { user } = useAuth();
+  const validUrls = websiteData.websites;
+  
 
   useEffect(() => {
     // Query the active tab and get its URL
@@ -58,11 +60,30 @@ function App() {
         }
     });
   }, []);
+  const isFoodNetworkUrl = validUrls.some(url => {
+    try {
+      return currentUrl.includes(url);
+    } catch {
+      return false;
+    }
+  });
+
+  console.log(isFoodNetworkUrl);
+  console.log(currentUrl);
 
   return (
-    <Card className="w-[350px] p-0 rounded-none bg-emerald-900">
-      
-      {user ? (
+    <Card className="w-[350px] rounded-none p-0 border-0 shadow-none bg-emerald-900">
+      {!isFoodNetworkUrl ? (
+        <CardContent className="pb-2">
+          <div className="text-white rounded-none text-center h-[100px] flex items-center justify-center">
+            <p className="text-white text-center text-lg font-semibold">No Recipe Found</p>
+          </div>
+        </CardContent>
+      ) :!user ? (
+        <div>
+          <Auth />
+        </div>
+      ) :  (
         <>
           <CardHeader>
             <CardTitle className="text-white">{recipe.title}</CardTitle>
@@ -92,12 +113,8 @@ function App() {
             <SignOutButton />
           </CardFooter>
         </>
-      ) : (
-          <div>
-            <Auth />
-          </div>
       )
-      }
+    }
     </Card>
   )
 }
