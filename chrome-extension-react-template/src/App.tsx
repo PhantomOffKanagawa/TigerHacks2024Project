@@ -12,6 +12,9 @@ import {
 } from "@/components/ui/card"
 import { Recipe } from './types/recipe'
 import IngredientScoreBar from './components/ui/IngredientScoreBar'
+import SignInButton from "./components/SignInButton.tsx";
+import {useAuth} from "./contexts/AuthContext.tsx";
+import SignOutButton from "./components/SignOutButton.tsx";
 
 
 const sampleRecipe: Recipe = {
@@ -42,35 +45,48 @@ const sampleRecipe: Recipe = {
 
 function App() {
   const [recipe] = useState<Recipe>(sampleRecipe);
-  
+
+  const { user } = useAuth();
+
   return (
     <Card className="w-[350px] p-0 rounded-none dark">
-      <CardHeader>
-        <CardTitle>{recipe.title}</CardTitle>
-        <CardDescription>{recipe.description}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <GaugeComponent value={recipe.ecoScore || 0} />
-        <div className="mt-4 space-y-2">
-          <div className="text-sm">
-          <span className="font-semibold mb-2 block">Ingredient Scores:</span>
-            {recipe.sanitizedIngredients.map((ingredient, index) => (
-              <IngredientScoreBar
-                key={index}
-                name={ingredient.name}
-                score={ingredient.score}
-              />
-            ))}
+      {user ? (
+        <>
+          <CardHeader>
+            <CardTitle>{recipe.title}</CardTitle>
+            <CardDescription>{recipe.description}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <GaugeComponent value={recipe.ecoScore || 0} />
+            <div className="mt-4 space-y-2">
+              <div className="text-sm">
+              <span className="font-semibold mb-2 block">Ingredient Scores:</span>
+                {recipe.sanitizedIngredients.map((ingredient, index) => (
+                  <IngredientScoreBar
+                    key={index}
+                    name={ingredient.name}
+                    score={ingredient.score}
+                  />
+                ))}
+              </div>
+              <div className="text-sm">
+                <span className="font-semibold">Rating:</span> {recipe.rating}/5
+              </div>
+            </div>
+          </CardContent>
+          <CardFooter className="flex justify-between">
+            <Button variant="outline">View Details</Button>
+            <Button>Save Recipe</Button>
+            <SignOutButton />
+          </CardFooter>
+        </>
+      ) : (
+          <div>
+            <h1>Please sign in</h1>
+            <SignInButton />
           </div>
-          <div className="text-sm">
-            <span className="font-semibold">Rating:</span> {recipe.rating}/5
-          </div>
-        </div>
-      </CardContent>
-      <CardFooter className="flex justify-between">
-        <Button variant="outline">View Details</Button>
-        <Button>Save Recipe</Button>
-      </CardFooter>
+      )
+      }
     </Card>
   )
 }
