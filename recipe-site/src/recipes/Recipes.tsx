@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { useRecipes } from '@/hook/useRecipes';
 import { LoadingSpinner } from '@/components/custom/loading';
 import { ErrorDisplay } from '@/components/custom/error';
+import { Header } from '@/components/custom/header';
 
 const RecipeList: FC = () => {
   const { recipes, loading, error, refreshRecipes } = useRecipes('mock-user-id');
@@ -21,7 +22,8 @@ const RecipeList: FC = () => {
 
   return (
     <div className="h-full w-full bg-gray-800">
-    <div className="max-w-7xl mx-auto py-12 px-6">
+      <Header />
+      <div className="max-w-7xl mx-auto py-12 px-6">
       <h1 className="w-min text-4xl font-bold text-white mb-12 mx-auto">Recipes</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {recipes.map((recipe) => (

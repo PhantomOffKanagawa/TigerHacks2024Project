@@ -6,7 +6,7 @@ import { Recipe } from '@/types/recipe';
 import { useRecipes } from '@/hook/useRecipes';
 import { LoadingSpinner } from '@/components/custom/loading';
 import { ErrorDisplay } from '@/components/custom/error';
-
+import { Header } from '@/components/custom/header';
 const RecipeDetail: FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -31,6 +31,7 @@ const RecipeDetail: FC = () => {
 
   return (
     <div className="bg-gray-800 min-h-screen">
+      <Header />
       <div className="max-w-4xl mx-auto py-12 px-6">
         <button 
           onClick={() => navigate(-1)}

@@ -1,14 +1,16 @@
 import { FC } from 'react';
 import { Button } from '@/components/ui/button';
-
+import { Header } from '@/components/custom/header';
 interface ErrorDisplayProps {
   message: string;
   onRetry?: () => void;
 }
 
 export const ErrorDisplay: FC<ErrorDisplayProps> = ({ message, onRetry }) => (
-  <div className="h-screen w-screen flex items-center justify-center bg-gray-800">
-    <div className="max-w-7xl mx-auto py-12 px-6 text-center">
+  <div className="h-screen w-screen bg-gray-800">
+      <Header />
+      <div className="flex items-center justify-center">
+      <div className="max-w-7xl mx-auto py-12 px-6 text-center">
       <div className="rounded-full h-32 w-32 bg-red-500/10 flex items-center justify-center mx-auto">
         <svg 
           className="h-16 w-16 text-red-500" 
@@ -33,7 +35,8 @@ export const ErrorDisplay: FC<ErrorDisplayProps> = ({ message, onRetry }) => (
         >
           Try Again
         </Button>
-      )}
+        )}
+      </div>
     </div>
   </div>
 );
