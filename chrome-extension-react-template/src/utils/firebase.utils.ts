@@ -25,15 +25,24 @@ export const signUpWithEmail = (email: string, password: string) => {
 };
 
 // Sign out
-export const signOutApp = () => {
-    return signOut(auth);
+export const signOutApp = async () => {
+    try {
+        await signOut(auth);
+        await chrome.storage.local.remove("userId");
+        console.log('User signed out');
+    } catch (error) {
+        console.error('Error signing out:', error);
+    }
 }
 
 // Listen for authentication state to change
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
     if (user) {
+        const userId = user.uid;
+        await chrome.storage.local.set({ userId });
         console.log('User is signed in:', user);
     } else {
+        await chrome.storage.local.remove("userId");
         console.log('User is signed out');
     }
 });
