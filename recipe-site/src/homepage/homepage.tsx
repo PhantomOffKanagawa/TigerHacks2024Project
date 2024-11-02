@@ -7,7 +7,9 @@ const Homepage: React.FC = () => {
   return (
     <main className="min-h-screen bg-[#004D40] text-white px-6 lg:px-20">
       <nav className="flex justify-between items-center py-4">
-        <div className="text-2xl font-bold">Lean Green</div>
+        <Link to="/">
+          <div className="text-2xl font-bold">Lean Green</div>
+        </Link>
         <div className="flex items-center space-x-8">
           <Link 
             to="/about" 

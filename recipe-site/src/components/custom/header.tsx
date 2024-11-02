@@ -21,7 +21,7 @@ export const Header: FC<HeaderProps> = ({ showLogins = true }) => {
           className="text-white hover:bg-primary-700 hover:text-gray-300"
           onClick={() => navigate('/')}
         >
-          Home
+          <div className="text-2xl font-bold">Lean Green</div>
         </Button>
         {user && (
           <div>
