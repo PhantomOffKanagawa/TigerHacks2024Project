@@ -28,24 +28,24 @@ const SignIn: React.FC = () => {
     };
 
     return (
-        <div>
-            <h2>Sign In</h2>
-            <form onSubmit={handleSubmit}>
-                <input
+        <div className="bg-gray-800 text-white rounded-lg shadow-lg p-4 max-w-md">
+            <h2 className="text-center p-2">Please Sign In</h2>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+                <input className="border border-gray-300 rounded-md p-2 items-start w-2/3 self-center"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Email"
                     required
                 />
-                <input
+                <input className="border border-gray-300 rounded-md p-2 items-start w-2/3 self-center"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Password"
                     required
                 />
-                <button type="submit" disabled={loading}>
+                <button type="submit" disabled={loading} className="bg-emerald-900 text-white p-2 rounded-md w-20 self-center">
                     {loading ? 'Signing In...' : 'Sign In'}
                 </button>
             </form>
