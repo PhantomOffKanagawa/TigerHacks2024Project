@@ -45,7 +45,7 @@ const SignIn: React.FC = () => {
                     placeholder="Password"
                     required
                 />
-                <button type="submit" disabled={loading} className="bg-emerald-900 text-white p-2 rounded-md w-20 self-center">
+                <button type="submit" disabled={loading} className="bg-emerald-900 text-white p-2 rounded-md w-2/3 self-center">
                     {loading ? 'Signing In...' : 'Sign In'}
                 </button>
             </form>
