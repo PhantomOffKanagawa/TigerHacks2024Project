@@ -87,6 +87,23 @@ router.get('/user/:userID', async (req, res) => {
     console.error('Error fetching recipes for user:', error)
     res.status(500).send({ error: 'Internal Server Error' })
   }
-})
+});
+
+router.get('/:recipeId', async (req, res) => {
+  const { recipeId } = req.params;
+
+  try {
+    const recipeDoc = await db.collection('recipes').doc(recipeId).get();
+
+    if (!recipeDoc.exists) {
+      return res.status(404).send({ error: 'Recipe not found' });
+    }
+
+    res.send({ id: recipeDoc.id, ...recipeDoc.data() });
+  } catch (error) {
+    console.error('Error fetching recipe:', error);
+    res.status(500).send({ error: 'Internal Server Error' });
+  }
+});
 
 export default router
