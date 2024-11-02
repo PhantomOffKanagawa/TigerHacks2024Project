@@ -1,13 +1,19 @@
 {
     "manifest_version": 3,
-    "name": "React Chrome Extension",
+    "name": "Lean Green",
     "version": "1.0.0",
-    "description": "A simple React app as a Chrome extension",
+    "description": "A companion for your green, eco-friendly kitchen",
     "action": {
       "default_popup": "index.html"
     },
     "permissions": ["identity", "offscreen", "tabs", "activeTab"],
     "content_security_policy": {
         "extension_pages": "script-src 'self'; object-src 'self'"
+    },
+    "icons": {
+        "16": "favicon-1.png",
+        "32": "favicon-1.png",
+        "48": "favicon-1.png",
+        "128": "favicon-1.png"
     }
 }
