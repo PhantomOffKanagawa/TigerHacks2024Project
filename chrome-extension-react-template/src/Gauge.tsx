@@ -7,11 +7,23 @@ interface GaugeComponentProps {
 
   const GaugeComponent: React.FC<GaugeComponentProps> = ({ value }) => {
   return (
-    <Gauge
+      <Gauge
+      type="semicircle"
+      arc={{
+        colorArray: ['#00FF15', '#FF2121'],
+        padding: 0.02,
+        subArcs: [
+          { limit: 40 },
+          { limit: 60 },
+          { limit: 70 },
+          {},
+          {},
+          {},
+          {}
+        ]
+      }}
+      pointer={{ type: "blob", animationDelay: 0 }}
       value={value}
-      type="radial"
-      minValue={0}
-      maxValue={100}
     />
   );
 };
