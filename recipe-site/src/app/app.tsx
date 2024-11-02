@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import RecipeList from '../recipes/recipes';
+import RecipeList from '../recipes/Recipes';
 import RecipeDetail from '../recipes/RecipeDetail';
 import Homepage from '../homepage/homepage';
 
