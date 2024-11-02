@@ -28,7 +28,9 @@ function simplifyIngredient(ingredient) {
   return cleaned
 }
 
-const allFoods = JSON.parse(fs.readFileSync('./gh_ings.json', 'utf8'))['foods']
+const allFoods = JSON.parse(fs.readFileSync('public/gh_ings.json', 'utf8'))[
+  'foods'
+]
 //const allFoods = JSON.parse(fs.readFileSync('./ingredient_list.json', 'utf8'))['foods'];
 // console.log(allFoods)
 

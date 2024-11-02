@@ -1,10 +1,7 @@
 import fs from 'fs'
 import Fuse from 'fuse.js'
 
-const ingredients = ['all-purpose flour', 'salt', 'eggs', 'butter']
-console.log(ingredients)
-
-const co2_data = JSON.parse(fs.readFileSync('./co2_data.json', 'utf8'))
+const co2_data = JSON.parse(fs.readFileSync('public/co2_data.json', 'utf8'))
 const foods = Object.keys(co2_data)
 
 function countMatchingWords(text, reference) {
@@ -24,13 +21,13 @@ function countMatchingWords(text, reference) {
 }
 
 export default function getCO2ByIngredient(ing) {
-  //console.log(`Searching ingredient ${ing}`)
+  // console.log(`Searching ingredient ${ing}`)
   const tallies = foods
     .map((food) => ({ food, matches: countMatchingWords(ing, food) }))
     .sort((a, b) => b.matches - a.matches)
   const val = tallies[0].matches
   if (val === 0) {
-    console.log(ing + ' not found!')
+    // console.log(ing + ' not found!')
     return -1
   }
   const maxes = [tallies[0]]

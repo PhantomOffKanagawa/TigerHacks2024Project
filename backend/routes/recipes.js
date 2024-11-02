@@ -3,6 +3,7 @@ import fetch from 'node-fetch'
 import { db } from '../config/firebase.js'
 import admin from 'firebase-admin'
 import dotenv from 'dotenv'
+import getCarbonScoresByRecipe from '../src/ing_pipeline/ingredient_data.js'
 
 dotenv.config()
 const router = express.Router()
@@ -40,10 +41,15 @@ router.post('/', async function (req, res) {
       .get()
 
     if (!recipeQuery.empty) {
+      console.log('not empty')
       recipeRef = recipeQuery.docs[0].ref
     } else {
       recipeRef = db.collection('recipes').doc()
-      console.log(data)
+      //   console.log('Need new data')
+      //   console.log(data)
+      const [carbonData, avg] = await getCarbonScoresByRecipe(data)
+      data['carbonData'] = carbonData
+      data['averageCarbonScore'] = avg
       await recipeRef.set(data)
     }
 
@@ -52,9 +58,10 @@ router.post('/', async function (req, res) {
       recipeIDs: admin.firestore.FieldValue.arrayUnion(recipeRef.id),
     })
 
-    res
-      .status(201)
-      .send({ message: 'Recipe saved successfully', recipeId: recipeRef.id })
+    res.status(201).send({
+      message: 'Recipe saved successfully',
+      recipeId: recipeRef.id,
+    })
   } catch (error) {
     console.error('There was a problem with the fetch operation:', error)
     res.status(500).send({ error: 'Internal Server Error' })
