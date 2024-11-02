@@ -60,7 +60,7 @@ function App() {
         }
     });
   }, []);
-  const isFoodNetworkUrl = validUrls.some(url => {
+  const isUrl = validUrls.some(url => {
     try {
       return currentUrl.includes(url);
     } catch {
@@ -68,12 +68,32 @@ function App() {
     }
   });
 
-  console.log(isFoodNetworkUrl);
-  console.log(currentUrl);
+
+  if(isUrl){
+    fetch("https://scgcplb7osrk65nbxgnzp43cz40jekxj.lambda-url.us-east-2.on.aws/", {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        "url":currentUrl
+      }
+    })
+    .then(res => {
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      return res.json();
+    })
+    .then(data => {
+      console.log(data);
+    })
+    .catch(error => {
+      console.error('Error fetching recipe:', error);
+    });
+  }
 
   return (
     <Card className="w-[350px] rounded-none p-0 border-0 shadow-none bg-emerald-900">
-      {!isFoodNetworkUrl ? (
+      {!isUrl ? (
         <CardContent className="pb-2">
           <div className="text-white rounded-none text-center h-[100px] flex items-center justify-center">
             <p className="text-white text-center text-lg font-semibold">No Recipe Found</p>
