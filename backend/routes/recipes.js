@@ -75,15 +75,21 @@ router.get('/user/:userID', async (req, res) => {
     const userDoc = await db.collection('users').doc(userID).get()
 
     if (!userDoc.exists) {
+      console.log('userDoc does not exist')
       return res.status(404).send({ error: 'User not found' })
     }
 
     const { recipeIDs } = userDoc.data()
 
-    const recipesQuery = await db
-      .collection('recipes')
-      .where(admin.firestore.FieldPath.documentId(), 'in', recipeIDs)
-      .get()
+    let recipesQuery = null
+    try {
+      recipesQuery = await db
+        .collection('recipes')
+        .where(admin.firestore.FieldPath.documentId(), 'in', recipeIDs)
+        .get()
+    } catch (e) {
+      return res.status(200).send([])
+    }
 
     const recipes = recipesQuery.docs.map((doc) => ({
       id: doc.id,
