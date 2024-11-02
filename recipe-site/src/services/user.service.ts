@@ -1,7 +1,7 @@
 import {
     User
 } from '@/types/user.d';
-import { db } from '@/config/firebase';
+import { db } from '@/utils/firebase.utils';
 import { doc, getDoc } from 'firebase/firestore';
 
 export const UserService = {

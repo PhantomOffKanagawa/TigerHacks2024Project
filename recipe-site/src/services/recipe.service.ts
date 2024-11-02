@@ -1,7 +1,7 @@
 import {
     Recipe
 } from '@/types/recipe';
-import { db } from '@/config/firebase';
+// import { db } from '@/utils/firebase.utils';
 import { collection, getDocs, addDoc, deleteDoc, doc, query, where, getDoc, updateDoc } from 'firebase/firestore';
 
 // This will be replaced with Firebase implementation later
@@ -316,100 +316,102 @@ const mockRecipes: Recipe[] = [{
 export const RecipeService = {
     // Get all recipes for a user
     getUserRecipes: async (userId: string): Promise < Recipe[] > => {
-        try {
-            const recipesRef = collection(db, 'recipes');
-            const q = query(recipesRef, where('userId', '==', userId));
-            const querySnapshot = await getDocs(q);
+        return mockRecipes;
+        // try {
+        //     const recipesRef = collection(db, 'recipes');
+        //     const q = query(recipesRef, where('userId', '==', userId));
+        //     const querySnapshot = await getDocs(q);
 
-            // TODO: Worried about typing here
-            return querySnapshot.docs.map((doc) => ({
-                // TODO: Figure out if we need to store the id
-                // id: doc.id,
-                ...doc.data()
-              })) as Recipe[];
-        } catch (error) {
-            console.error('Error fetching recipes:', error);
-            throw new Error('Failed to fetch recipes');
-        }
+        //     // TODO: Worried about typing here
+        //     return querySnapshot.docs.map((doc) => ({
+        //         // TODO: Figure out if we need to store the id
+        //         // id: doc.id,
+        //         ...doc.data()
+        //       })) as Recipe[];
+        // } catch (error) {
+        //     console.error('Error fetching recipes:', error);
+        //     throw new Error('Failed to fetch recipes');
+        // }
     },
 
     // Get a single recipe by ID
     getRecipeById: async (recipeId: string): Promise < Recipe | undefined > => {
-        try {
-            const recipesRef = doc(db, 'recipes', recipeId.toString());
-            const recipeSnap = await getDoc(recipesRef);
+        return mockRecipes.find(recipe => recipe.id === recipeId);
+        // try {
+        //     const recipesRef = doc(db, 'recipes', recipeId.toString());
+        //     const recipeSnap = await getDoc(recipesRef);
 
-            if (!recipeSnap.exists()) {
-                return undefined;
-            }
+        //     if (!recipeSnap.exists()) {
+        //         return undefined;
+        //     }
 
-            return {
-                // id: recipeSnap.id,
-                ...recipeSnap.data()
-             } as Recipe;
+        //     return {
+        //         // id: recipeSnap.id,
+        //         ...recipeSnap.data()
+        //      } as Recipe;
 
-        } catch (error) {
-            console.error('Error fetching recipe:', error);
-            throw new Error('Failed to fetch recipe');
-        }
+        // } catch (error) {
+        //     console.error('Error fetching recipe:', error);
+        //     throw new Error('Failed to fetch recipe');
+        // }
     },
 
     // Add a new recipe
     // TODO: Decide if will every be used in production
-    addRecipe: async (userId: string, recipe: Omit < Recipe, 'id' > ): Promise < Recipe > => {
-        try {
-            const recipesRef = collection(db, 'recipes');
-            const newRecipeData = {
-                ...recipe,
-                userId,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-            };
+    // addRecipe: async (userId: string, recipe: Omit < Recipe, 'id' > ): Promise < Recipe > => {
+    //     try {
+    //         const recipesRef = collection(db, 'recipes');
+    //         const newRecipeData = {
+    //             ...recipe,
+    //             userId,
+    //             createdAt: new Date().toISOString(),
+    //             updatedAt: new Date().toISOString(),
+    //         };
 
-            const docRef = await addDoc(recipesRef, newRecipeData);
+    //         const docRef = await addDoc(recipesRef, newRecipeData);
 
-            return {
-                id: docRef.id,
-                ...newRecipeData
-            };
-        } catch (error) {
-            console.error('Error adding recipe:', error);
-            throw new Error('Failed to add recipe');
-        }
-    },
+    //         return {
+    //             id: docRef.id,
+    //             ...newRecipeData
+    //         };
+    //     } catch (error) {
+    //         console.error('Error adding recipe:', error);
+    //         throw new Error('Failed to add recipe');
+    //     }
+    // },
 
-    // Delete a recipe
-    deleteRecipe: async (recipeId: number): Promise < void > => {
-        try {
-            const recipeRef = doc(db, 'recipes', recipeId.toString());
-            await deleteDoc(recipeRef);
-        } catch (error) {
-            console.error('Error deleting recipe:', error);
-            throw new Error('Failed to delete recipe');
-        }
-    },
+    // // Delete a recipe
+    // deleteRecipe: async (recipeId: number): Promise < void > => {
+    //     try {
+    //         const recipeRef = doc(db, 'recipes', recipeId.toString());
+    //         await deleteDoc(recipeRef);
+    //     } catch (error) {
+    //         console.error('Error deleting recipe:', error);
+    //         throw new Error('Failed to delete recipe');
+    //     }
+    // },
 
-    // Update a recipe
-    // TODO: Decide if will every be used in production
-    updateRecipe: async (recipeId: string, updates: Partial<Recipe>): Promise<Recipe> => {
-        try {
-            const recipeRef = doc(db, 'recipes', recipeId);
-            const updateData = {
-                ...updates,
-                updatedAt: new Date().toISOString(),
-            };
+    // // Update a recipe
+    // // TODO: Decide if will every be used in production
+    // updateRecipe: async (recipeId: string, updates: Partial<Recipe>): Promise<Recipe> => {
+    //     try {
+    //         const recipeRef = doc(db, 'recipes', recipeId);
+    //         const updateData = {
+    //             ...updates,
+    //             updatedAt: new Date().toISOString(),
+    //         };
 
-            await updateDoc(recipeRef, updateData);
+    //         await updateDoc(recipeRef, updateData);
 
-            // Fetch and return the updated recipe
-            const updatedRecipe = await getDoc(recipeRef);
-            return {
-                id: updatedRecipe.id,
-                ...updatedRecipe.data()
-            } as Recipe;
-        } catch (error) {
-            console.error('Error updating recipe:', error);
-            throw new Error('Failed to update recipe');
-        }
-    }
+    //         // Fetch and return the updated recipe
+    //         const updatedRecipe = await getDoc(recipeRef);
+    //         return {
+    //             id: updatedRecipe.id,
+    //             ...updatedRecipe.data()
+    //         } as Recipe;
+    //     } catch (error) {
+    //         console.error('Error updating recipe:', error);
+    //         throw new Error('Failed to update recipe');
+    //     }
+    // }
 };
