@@ -1,99 +1,46 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
-import { Recipe } from '@/types/recipe';
 
-const recipes: Recipe[] = [
-    {
-      id: 1,
-      title: 'Vegetarian Lasagna',
-      image: 'https://example.com/lasagna.jpg',
-      prep_time: 30,
-      author: 'John Doe',
-      cuisine: 'Italian',
-      description: 'A delicious plant-based version of the classic Italian dish',
-      language: 'English',
-      instructions: 'make pasta, cook pasta',
-      instructions_list: ['make pasta', 'cook pasta'],
-      ingredient_groups: [{purpose: null, ingredients: ['1 cup pasta', '1 cup tomato sauce']}],
-      cook_time: 30,
-      site_name: 'example.com',
-      ratings: 92,
-      yields: '1',
-      host: 'example.com',
-      ingredients: ['1 cup pasta', '1 cup tomato sauce'],
-      category: 'main',
-      ratings_count: 100,
-      total_time: 60,
-      ecoScore: 20,
-      rating: 3,
-      sanitizedIngredients: [{name: 'pasta', score: 20}, {name: 'tomato sauce', score: 20}]
-    },
-    {
-      id: 2,
-      title: 'Vegetarian Lasagna',
-      image: 'https://example.com/lasagna.jpg',
-      prep_time: 30,
-      author: 'John Doe',
-      cuisine: 'Italian',
-      description: 'A delicious plant-based version of the classic Italian dish',
-      language: 'English',
-      instructions: 'make pasta, cook pasta',
-      instructions_list: ['make pasta', 'cook pasta'],
-      ingredient_groups: [{purpose: null, ingredients: ['1 cup pasta', '1 cup tomato sauce']}],
-      cook_time: 30,
-      site_name: 'example.com',
-      ratings: 92,
-      yields: '1',
-      host: 'example.com',
-      ingredients: ['1 cup pasta', '1 cup tomato sauce'],
-      category: 'main',
-      ratings_count: 100,
-      total_time: 60,
-      ecoScore: 48,
-      rating: 2,
-      sanitizedIngredients: [{name: 'pasta', score: 20}, {name: 'tomato sauce', score: 20}]
-    },
-    {
-      id: 3,
-      title: 'Vegetarian Lasagna',
-      image: 'https://example.com/lasagna.jpg',
-      prep_time: 30,
-      author: 'John Doe',
-      cuisine: 'Italian',
-      description: 'A delicious plant-based version of the classic Italian dish',
-      language: 'English',
-      instructions: 'make pasta, cook pasta',
-      instructions_list: ['make pasta', 'cook pasta'],
-      ingredient_groups: [{purpose: null, ingredients: ['1 cup pasta', '1 cup tomato sauce']}],
-      cook_time: 30,
-      site_name: 'example.com',
-      ratings: 92,
-      yields: '1',
-      host: 'example.com',
-      ingredients: ['1 cup pasta', '1 cup tomato sauce'],
-      category: 'main',
-      ratings_count: 100,
-      total_time: 60,
-      ecoScore: 98,
-      rating: 4,
-      sanitizedIngredients: [{name: 'pasta', score: 20}, {name: 'tomato sauce', score: 20}]
-    }
-  ];
-
+import { useRecipes } from '@/hook/useRecipes';
+import { LoadingSpinner } from '@/components/custom/loading';
+import { ErrorDisplay } from '@/components/custom/error';
+import { Header } from '@/components/custom/header';
+import { Skeleton } from 'components/ui/skeleton';
+import { Checkbox } from 'components/ui/checkbox';
+import { Button } from 'components/ui/button';
+import { Info } from 'lucide-react';
+import { Dialog, DialogDescription, DialogTitle, DialogHeader, DialogContent, DialogTrigger } from 'components/ui/dialog';
 const RecipeDetail: FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  
-  // In a real app, you'd fetch this from an API
+
+  // Get all recipes
+  const { recipes, loading, error, refreshRecipes } = useRecipes('mock-user-id');
+
+  // State for substitutes and substitutes modal
+  const [showSubstitutes, setShowSubstitutes] = useState(false);
+  const [ingredientToSubstitute, setIngredientToSubstitute] = useState(null);
+
+  if (loading) {
+    // return <LoadingSpinner />;
+  }
+
+  if (error) {
+    // return <ErrorDisplay message={error.message} onRetry={refreshRecipes} />;
+  }
+
+  // Get with ID
+  // TODO: Firebase only retrieve this recipe?
   const recipe = recipes.find((r) => r.id === parseInt(id || ''));
 
   if (!recipe) {
-    return <div>Recipe not found</div>;
+    return <ErrorDisplay message="Recipe not found" onRetry={refreshRecipes} />;
   }
 
   return (
-    <div className="bg-gray-800 min-h-screen">
+    <div className="bg-background min-h-screen">
+      <Header />
       <div className="max-w-4xl mx-auto py-12 px-6">
         <button 
           onClick={() => navigate(-1)}
@@ -102,10 +49,10 @@ const RecipeDetail: FC = () => {
           ← Back to Recipes
         </button>
         
-        <Card className="bg-gray-800 p-8 rounded-lg">
-          <h1 className="text-4xl font-bold text-white mb-4">{recipe.title}</h1>
+        <Card className="p-8 rounded-lg">
+          <h1 className="text-4xl font-bold text-white mb-4 font-display">{recipe.title}</h1>
           <div className="space-y-6">
-            <div className="aspect-video bg-gray-700 rounded-lg" />
+            <Skeleton className="aspect-video bg-gray-700/20 rounded-lg" />
             
             <div className="flex items-center space-x-4 text-gray-400">
               <span>By {recipe.author}</span>
@@ -134,7 +81,49 @@ const RecipeDetail: FC = () => {
               <h2 className="text-2xl font-semibold text-white mb-3">Ingredients</h2>
               <ul className="list-disc list-inside text-gray-300">
                 {recipe.ingredients.map((ingredient: string, index: number) => (
-                  <li key={index}>{ingredient}</li>
+                  <li key={index} className="flex items-center space-x-2">
+                    <Checkbox className="text-green-400 me-2" />
+                    {ingredient}
+                    <div className="flex-1"></div>
+                    {/* TODO: Rework datastructure to include original ingredient name with score normalized ingredients */}
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="ghost" size="icon" className="w-14 p-0 text-gray-400 ml-auto text-right underline">
+                          {recipe.sanitizedIngredients[index].ecoScore}
+                          <Info className="w-4 h-4" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                          <DialogTitle>Substitute {recipe.sanitizedIngredients[index].name}</DialogTitle>
+                          <DialogDescription>
+                            Choose a more eco-friendly alternative
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          {/* TODO: Replace with real substitutes look up */}
+                          {[
+                            { name: 'Tofu', ecoScore: 85 },
+                            { name: 'Tempeh', ecoScore: 80 },
+                            { name: 'Seitan', ecoScore: 75 }
+                          ].map(sub => (
+                            <div key={sub.name} className="flex items-center justify-between p-2 hover:bg-gray-700/10 rounded">
+                              <span>{sub.name}</span>
+                              <div className="flex items-center gap-2">
+                                <span className={`${sub.ecoScore > recipe.sanitizedIngredients[index].ecoScore ? 'text-green-500' : 'text-red-500'}`}>
+                                  {sub.ecoScore > recipe.sanitizedIngredients[index].ecoScore ? '↑' : '↓'}
+                                  {Math.abs(sub.ecoScore - recipe.sanitizedIngredients[index].ecoScore)}
+                                </span>
+                                <Button variant="outline" size="sm">
+                                  Use This
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </li>
                 ))}
               </ul>
             </div>

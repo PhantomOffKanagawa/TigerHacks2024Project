@@ -20,7 +20,7 @@
         hsla(0, 0%, 84.3%, 0.25) 1px,
         transparent 0
       ),
-      radial-gradient(hsla(0, 0%, 84.3%, 0.1) 1px, transparent 0);
+      radial-gradient(hsla(0, 11%, 43%, 0.1) 1px, transparent 0);
     background-size: 50px 50px;
     background-position: 0 0, 25px 25px;
     -webkit-animation: slide 2s linear infinite;
@@ -88,4 +88,11 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+* {
+  font-family: "JetBrains Mono", monospace;
+  font-optical-sizing: auto;
+  font-weight: normal;
+  font-style: normal;
 }
