@@ -20,7 +20,7 @@ export const signInWithEmail = (email: string, password: string) => {
 };
 
 // Register a new user
-export const registerWithEmail = (email: string, password: string) => {
+export const signUpWithEmail = (email: string, password: string) => {
     return createUserWithEmailAndPassword(auth, email, password);
 };
 
