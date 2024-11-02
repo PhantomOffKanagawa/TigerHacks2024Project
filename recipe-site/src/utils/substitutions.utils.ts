@@ -40,7 +40,7 @@ interface FoodItem {
     "Eggs": ["Flax Seeds", "Chia Seeds"],
   };
   
-  export function getSubstitutions(ingredientName: string): FoodItem[] {
+  export function getSubstitutions(ingredientName: string, currentSubstitution?: string): FoodItem[] {
     // Normalize the ingredient name for lookup
     const normalizedName = ingredientName.trim().toLowerCase();
     
@@ -52,8 +52,18 @@ interface FoodItem {
     if (!originalItem) return [];
     
     // Get possible substitutions from the map
-    const substitutes = substitutionMap[originalItem.name] || [];
+    let substitutes = substitutionMap[originalItem.name] || [];
     
+    // Remove the current substitution from the list if it exists
+    if (currentSubstitution && substitutes.includes(currentSubstitution)) {
+      substitutes = substitutes.filter(sub => sub !== currentSubstitution);
+    }
+
+    // Add the original item back to the list if currently substituted
+    if (currentSubstitution) {
+      substitutes.unshift(originalItem.name);
+    }
+
     // Return the substitute items with their eco scores
     return substitutes
       .map(subName => foodDatabase.find(item => item.name === subName))
