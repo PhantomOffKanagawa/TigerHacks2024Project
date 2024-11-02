@@ -3,93 +3,30 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Recipe } from '@/types/recipe';
 
-const recipes: Recipe[] = [
-    {
-      id: 1,
-      title: 'Vegetarian Lasagna',
-      image: 'https://example.com/lasagna.jpg',
-      prep_time: 30,
-      author: 'John Doe',
-      cuisine: 'Italian',
-      description: 'A delicious plant-based version of the classic Italian dish',
-      language: 'English',
-      instructions: 'make pasta, cook pasta',
-      instructions_list: ['make pasta', 'cook pasta'],
-      ingredient_groups: [{purpose: null, ingredients: ['1 cup pasta', '1 cup tomato sauce']}],
-      cook_time: 30,
-      site_name: 'example.com',
-      ratings: 92,
-      yields: '1',
-      host: 'example.com',
-      ingredients: ['1 cup pasta', '1 cup tomato sauce'],
-      category: 'main',
-      ratings_count: 100,
-      total_time: 60,
-      ecoScore: 20,
-      rating: 3,
-      sanitizedIngredients: [{name: 'pasta', score: 20}, {name: 'tomato sauce', score: 20}]
-    },
-    {
-      id: 2,
-      title: 'Vegetarian Lasagna',
-      image: 'https://example.com/lasagna.jpg',
-      prep_time: 30,
-      author: 'John Doe',
-      cuisine: 'Italian',
-      description: 'A delicious plant-based version of the classic Italian dish',
-      language: 'English',
-      instructions: 'make pasta, cook pasta',
-      instructions_list: ['make pasta', 'cook pasta'],
-      ingredient_groups: [{purpose: null, ingredients: ['1 cup pasta', '1 cup tomato sauce']}],
-      cook_time: 30,
-      site_name: 'example.com',
-      ratings: 92,
-      yields: '1',
-      host: 'example.com',
-      ingredients: ['1 cup pasta', '1 cup tomato sauce'],
-      category: 'main',
-      ratings_count: 100,
-      total_time: 60,
-      ecoScore: 48,
-      rating: 2,
-      sanitizedIngredients: [{name: 'pasta', score: 20}, {name: 'tomato sauce', score: 20}]
-    },
-    {
-      id: 3,
-      title: 'Vegetarian Lasagna',
-      image: 'https://example.com/lasagna.jpg',
-      prep_time: 30,
-      author: 'John Doe',
-      cuisine: 'Italian',
-      description: 'A delicious plant-based version of the classic Italian dish',
-      language: 'English',
-      instructions: 'make pasta, cook pasta',
-      instructions_list: ['make pasta', 'cook pasta'],
-      ingredient_groups: [{purpose: null, ingredients: ['1 cup pasta', '1 cup tomato sauce']}],
-      cook_time: 30,
-      site_name: 'example.com',
-      ratings: 92,
-      yields: '1',
-      host: 'example.com',
-      ingredients: ['1 cup pasta', '1 cup tomato sauce'],
-      category: 'main',
-      ratings_count: 100,
-      total_time: 60,
-      ecoScore: 98,
-      rating: 4,
-      sanitizedIngredients: [{name: 'pasta', score: 20}, {name: 'tomato sauce', score: 20}]
-    }
-  ];
+import { useRecipes } from '@/hook/useRecipes';
+import { LoadingSpinner } from '@/components/custom/loading';
+import { ErrorDisplay } from '@/components/custom/error';
 
 const RecipeDetail: FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  
-  // In a real app, you'd fetch this from an API
+
+  const { recipes, loading, error, refreshRecipes } = useRecipes('mock-user-id');
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
+  if (error) {
+    return <ErrorDisplay message={error.message} onRetry={refreshRecipes} />;
+  }
+
+  // Get with ID
+  // TODO: Firebase only retrieve this recipe?
   const recipe = recipes.find((r) => r.id === parseInt(id || ''));
 
   if (!recipe) {
-    return <div>Recipe not found</div>;
+    return <ErrorDisplay message="Recipe not found" onRetry={refreshRecipes} />;
   }
 
   return (
