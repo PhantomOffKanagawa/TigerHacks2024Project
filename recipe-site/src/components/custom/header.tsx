@@ -15,11 +15,11 @@ export const Header: FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
   }
 
   return (
-    <header className="bg-gray-900 py-4 px-6 shadow-lg">
+    <header className="bg-emerald-900 py-4 px-6 shadow-lg">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <Button
           variant="ghost"
-          className="text-white hover:text-gray-300"
+          className="text-white hover:bg-primary-700 hover:text-gray-300"
           onClick={() => navigate('/')}
         >
           Home
@@ -30,13 +30,13 @@ export const Header: FC<HeaderProps> = ({ isLoggedIn = false, onLogout }) => {
             <>
               <Button
                 variant="outline"
-                className="text-gray-900 hover:text-gray-300"
+                className="bg-primary-200 hover:bg-primary-300 text-gray-800 hover:text-gray-900"
                 onClick={() => navigate('/login')}
               >
                 Login
               </Button>
               <Button
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                className="bg-primary-600 hover:bg-primary-700 text-white"
                 onClick={() => navigate('/signup')}
               >
                 Sign Up

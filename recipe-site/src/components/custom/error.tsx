@@ -7,13 +7,13 @@ interface ErrorDisplayProps {
 }
 
 export const ErrorDisplay: FC<ErrorDisplayProps> = ({ message, onRetry }) => (
-  <div className="h-screen w-screen bg-gray-800">
+  <div className="h-screen w-screen bg-background">
       <Header />
-      <div className="flex items-center justify-center">
+      <div className="flex items-center justify-center min-h-[80vh]">
       <div className="max-w-7xl mx-auto py-12 px-6 text-center">
-      <div className="rounded-full h-32 w-32 bg-red-500/10 flex items-center justify-center mx-auto">
+      <div className="rounded-full h-64 w-64 bg-red-500/30 flex items-center justify-center mx-auto">
         <svg 
-          className="h-16 w-16 text-red-500" 
+          className="h-32 w-32 text-red-500" 
           fill="none" 
           viewBox="0 0 24 24" 
           stroke="currentColor"
@@ -26,8 +26,8 @@ export const ErrorDisplay: FC<ErrorDisplayProps> = ({ message, onRetry }) => (
           />
         </svg>
       </div>
-      <h2 className="text-xl font-semibold text-white mt-4">Error</h2>
-      <p className="text-gray-400 mt-2">{message}</p>
+      <h2 className="text-3xl font-semibold text-white mt-5">Error</h2>
+      <p className="text-gray-400 mt-2 text-xl">{message}</p>
       {onRetry && (
         <Button 
           onClick={onRetry}
