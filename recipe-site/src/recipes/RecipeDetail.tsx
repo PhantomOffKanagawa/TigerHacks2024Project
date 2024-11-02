@@ -11,6 +11,7 @@ import { Checkbox } from 'components/ui/checkbox';
 import { Button } from 'components/ui/button';
 import { Info } from 'lucide-react';
 import { Dialog, DialogDescription, DialogTitle, DialogHeader, DialogContent, DialogTrigger } from 'components/ui/dialog';
+import { getSubstitutions, hasSubstitutions } from '@/utils/substitutions.utils';
 const RecipeDetail: FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -84,11 +85,12 @@ const RecipeDetail: FC = () => {
                     {ingredient}
                     <div className="flex-1"></div>
                     {/* TODO: Rework datastructure to include original ingredient name with score normalized ingredients */}
-                    <Dialog>
+                    {hasSubstitutions(recipe.sanitizedIngredients[index].name) ? (
+                      <Dialog>
                       <DialogTrigger asChild>
-                        <Button variant="ghost" size="icon" className="w-14 p-0 text-gray-400 ml-auto text-right underline">
+                        <Button variant="ghost" size="icon" className="w-14 text-lg p-0 text-gray-400 ml-auto text-right underline">
                           {recipe.sanitizedIngredients[index].ecoScore}
-                          <Info className="w-4 h-4" />
+                          {/* <Info className="w-4 h-4" /> */}
                         </Button>
                       </DialogTrigger>
                       <DialogContent className="sm:max-w-md">
@@ -99,28 +101,32 @@ const RecipeDetail: FC = () => {
                           </DialogDescription>
                         </DialogHeader>
                         <div className="space-y-4">
-                          {/* TODO: Replace with real substitutes look up */}
-                          {[
-                            { name: 'Tofu', ecoScore: 85 },
-                            { name: 'Tempeh', ecoScore: 80 },
-                            { name: 'Seitan', ecoScore: 75 }
-                          ].map(sub => (
-                            <div key={sub.name} className="flex items-center justify-between p-2 hover:bg-gray-700/10 rounded">
-                              <span>{sub.name}</span>
-                              <div className="flex items-center gap-2">
-                                <span className={`${sub.ecoScore > recipe.sanitizedIngredients[index].ecoScore ? 'text-green-500' : 'text-red-500'}`}>
-                                  {sub.ecoScore > recipe.sanitizedIngredients[index].ecoScore ? '↑' : '↓'}
-                                  {Math.abs(sub.ecoScore - recipe.sanitizedIngredients[index].ecoScore)}
-                                </span>
-                                <Button variant="outline" size="sm">
-                                  Use This
-                                </Button>
+                        {recipe.sanitizedIngredients[index].name && (
+                          <div className="space-y-4">
+                            {getSubstitutions(recipe.sanitizedIngredients[index].name).map(sub => (
+                              <div key={sub.name} className="flex items-center justify-between p-2 hover:bg-gray-700/10 rounded">
+                                <span>{sub.name}</span>
+                                <div className="flex items-center gap-2">
+                                  <span className={`${sub.ecoScore > recipe.sanitizedIngredients[index].ecoScore ? 'text-green-500' : 'text-red-500'}`}>
+                                    {sub.ecoScore > recipe.sanitizedIngredients[index].ecoScore ? '↑' : '↓'}
+                                    {Math.abs(sub.ecoScore - recipe.sanitizedIngredients[index].ecoScore)}
+                                  </span>
+                                  <Button variant="outline" size="sm">
+                                    Use This
+                                  </Button>
+                                </div>
                               </div>
-                            </div>
-                          ))}
-                        </div>
+                            ))}
+                          </div>
+                        )}
+                        </div>  
                       </DialogContent>
                     </Dialog>
+                    ) : (
+                      <div className="w-14 text-lg p-0 ml-auto text-center">
+                        {recipe.sanitizedIngredients[index].ecoScore}
+                      </div>
+                    )}
                   </li>
                 ))}
               </ul>

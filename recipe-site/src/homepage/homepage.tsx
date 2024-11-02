@@ -1,11 +1,8 @@
-import { useRecipes } from '@/hook/useRecipes';
+import { ExtensionBanner } from 'components/custom/ExtensionBanner';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Homepage: React.FC = () => {
-  const { recipes, loading, error, refreshRecipes } = useRecipes('mock-user-id');
-
-  console.log(recipes);
 
   return (
     <main className="min-h-screen bg-[#004D40] text-white px-6 lg:px-20">
@@ -35,6 +32,7 @@ const Homepage: React.FC = () => {
           Committed to ethical recipes and eco-friendly cooking solutions.
         </p>
       </div>
+      <ExtensionBanner dismissable={false} />
     </main>
   );
 };

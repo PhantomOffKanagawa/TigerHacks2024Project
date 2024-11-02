@@ -23,6 +23,11 @@ export const Header: FC<HeaderProps> = ({ showLogins = true }) => {
         >
           Home
         </Button>
+        {user && (
+          <div>
+            Hello {user.email}
+          </div>
+        )}
         
         <div className="space-x-2">
           {!user && showLogins ? (
