@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Skeleton } from 'components/ui/skeleton';
 
 import { Recipe } from '@/types/recipe';
+import { Link } from 'react-router-dom';
 
 const recipes: Recipe[] = [
   {
@@ -93,7 +94,9 @@ const RecipeList: FC = () => {
           <Card key={recipe.canonical_url} className="bg-gray-800 p-6 rounded-lg">
             <Skeleton className="bg-gray-700 w-full h-[150px] rounded-lg" />
             <div className="space-y-4 py-2">
-              <h2 className="text-xl font-semibold text-white">{recipe.title}</h2>
+              <Link to={`/recipes/${recipe.id}`}>
+                <h2 className="text-xl font-semibold text-white">{recipe.title}</h2>
+              </Link>
               <p className="text-gray-400">{recipe.description}</p>
               <div className="flex justify-between items-center">
                 {recipe.ecoScore && (
