@@ -7,22 +7,8 @@ const MAX_EMISSIONS = 78.8
 const SIGMOID_STEEPNESS = 1
 const SIGMOID_MIDPOINT = 10
 
-export default async function getCarbonScoresByURL(url) {
-  const response = await fetch(LAMBDA_FUNCTION_URL, {
-    method: 'POST',
-    body: JSON.stringify({ url }),
-  })
-
-  let scrapedData = null
-  if (response.ok) {
-    scrapedData = await response.json()
-    //console.log(scrapedData)
-  } else {
-    console.warn(`${url} did not respond`)
-    return
-  }
-
-  const { ingredients } = scrapedData
+export default async function getCarbonScoresByRecipe(recipe) {
+  const { ingredients } = recipe
 
   //console.log('Raw ingredients')
   //console.log(ingredients)
@@ -63,6 +49,6 @@ export default async function getCarbonScoresByURL(url) {
   )
   //console.log(`Total score: ${sum}`)
   const avg = sum / Object.keys(withoutUnknown).length
-  console.log(`Average score: ${avg}`)
+  // console.log(`Average score: ${avg}`)
   return [carbonData, avg]
 }

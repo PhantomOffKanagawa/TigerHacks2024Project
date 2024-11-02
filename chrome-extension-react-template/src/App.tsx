@@ -20,27 +20,27 @@ import websiteData from './websites.json';
 let first = true;
 
 const sampleRecipe: RecipeData = {
-  title: 'Vegetarian Lasagna',
+  title: 'Loading...',
   image: 'https://example.com/lasagna.jpg',
-  prep_time: 30,
+  prep_time: 0,
   author: 'John Doe',
   cuisine: 'Italian',
-  description: 'A delicious plant-based version of the classic Italian dish',
+  description: 'Loading',
   language: 'English',
-  instructions: 'make pasta, cook pasta',
-  instructions_list: ['make pasta', 'cook pasta'],
-  ingredient_groups: [{purpose: null, ingredients: ['1 cup pasta', '1 cup tomato sauce']}],
-  cook_time: 30,
+  instructions: 'Loading',
+  instructions_list: ['Loading', 'Loading'],
+  ingredient_groups: [{purpose: null, ingredients: ['Loading', 'Loading']}],
+  cook_time: 0,
   site_name: 'example.com',
-  ratings_count: 92,
-  yields: '1',
+  ratings_count: 0,
+  yields: '0',
   host: 'example.com',
-  ingredients: ['1 cup pasta', '1 cup tomato sauce'],
+  ingredients: ['Loading', 'Loading'],
   category: 'main',
-  total_time: 60,
-  ecoScore: 20,
-  ratings: 3,
-  sanitizedIngredients: [{name: 'pasta', score: 20}, {name: 'tomato sauce', score: 20}]
+  total_time: 0,
+  ecoScore: 0,
+  ratings: 0,
+  sanitizedIngredients: [{name: 'Loading', score: 0}, {name: 'Loading', score: 0}]
 }
 
 function App() {
