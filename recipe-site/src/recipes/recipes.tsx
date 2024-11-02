@@ -27,9 +27,9 @@ const recipes: Recipe[] = [
     category: 'main',
     ratings_count: 100,
     total_time: 60,
-    ecoScore: 48,
-    rating: 92,
-    sanitizedIngredients: ['pasta', 'tomato sauce']
+    ecoScore: 20,
+    rating: 3,
+    sanitizedIngredients: [{name: 'pasta', score: 20}, {name: 'tomato sauce', score: 20}]
   },
   {
     id: 2,
@@ -53,8 +53,8 @@ const recipes: Recipe[] = [
     ratings_count: 100,
     total_time: 60,
     ecoScore: 48,
-    rating: 92,
-    sanitizedIngredients: ['pasta', 'tomato sauce']
+    rating: 2,
+    sanitizedIngredients: [{name: 'pasta', score: 20}, {name: 'tomato sauce', score: 20}]
   },
   {
     id: 3,
@@ -77,9 +77,9 @@ const recipes: Recipe[] = [
     category: 'main',
     ratings_count: 100,
     total_time: 60,
-    ecoScore: 48,
-    rating: 92,
-    sanitizedIngredients: ['pasta', 'tomato sauce']
+    ecoScore: 98,
+    rating: 4,
+    sanitizedIngredients: [{name: 'pasta', score: 20}, {name: 'tomato sauce', score: 20}]
   }
 ];
 
@@ -98,14 +98,14 @@ const RecipeList: FC = () => {
               <div className="flex justify-between items-center">
                 {recipe.ecoScore && (
                   <div className="flex items-center space-x-2">
-                    <span className="text-sm text-gray-400">Completion</span>
-                    <span className="text-green-400">{recipe.ecoScore}%</span>
+                    <span className="text-sm text-gray-400">Eco Score</span>
+                    <span className="text-green-400">{recipe.ecoScore}</span>
                   </div>
                 )}
                 {recipe.rating && (
                   <div className="flex items-center space-x-2">
-                    <span className="text-sm text-gray-400">Satisfaction</span>
-                    <span className="text-blue-400">{recipe.rating}%</span>
+                    <span className="text-sm text-gray-400">Rating</span>
+                    <span className="text-blue-400">{recipe.rating}/5</span>
                   </div>
                 )}
               </div>

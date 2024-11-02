@@ -44,9 +44,14 @@ export interface RecipeData {
     ingredient_groups: IngredientGroup[];
 }
 
+export interface sanitizedIngredient {
+    name: string;
+    score: number;
+}
+
 export interface Recipe extends RecipeData {
     id: number;
-    sanitizedIngredients: string[];
+    sanitizedIngredients: sanitizedIngredient[];
     ecoScore?: number;
     rating?: number;
 }
