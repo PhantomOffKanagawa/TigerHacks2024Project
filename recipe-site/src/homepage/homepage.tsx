@@ -18,7 +18,7 @@ const Homepage: React.FC = () => {
           >
             About
           </Link>
-          <Link to="/recipes">
+          <Link to="/login">
             <button className="bg-[#00BFA5] text-white px-6 py-3 rounded-full font-medium hover:bg-[#00A896] transition-colors">
               Get Started
             </button>

@@ -3,6 +3,7 @@ import { signUpWithEmail, signInWithEmail } from "@/utils/firebase.utils.ts";
 import { FirebaseError } from "firebase/app";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import LoadingSpinner from "@/components/custom/LoadingSpinner";
 
 const Auth: React.FC<{ defaultSignUp?: boolean }> = ({ defaultSignUp = false }) => {
   const [email, setEmail] = useState("");
@@ -44,9 +45,7 @@ const Auth: React.FC<{ defaultSignUp?: boolean }> = ({ defaultSignUp = false }) 
   return (
     <div>
         {loading && (
-            <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-background/50">
-                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-white mx-auto"></div>
-            </div>
+            <LoadingSpinner />
         )}
       <h2 className="text-2xl font-bold text-center mb-6">{isSignUp ? "Sign Up" : "Sign In"}</h2>
       <form onSubmit={handleSubmit} className="space-y-4">

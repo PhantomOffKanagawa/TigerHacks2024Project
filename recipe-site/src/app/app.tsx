@@ -4,13 +4,22 @@ import RecipeDetail from '../recipes/RecipeDetail';
 import Homepage from '../homepage/homepage';
 import Login from '@/account/login';
 import RequireAuth from 'components/custom/RequireAuth';
+import RequireUnAuth from 'components/custom/RequireUnAuth';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Login isSignUp={true} />} />
+        <Route path="/login" element={
+          <RequireUnAuth>
+            <Login />
+          </RequireUnAuth>
+        } />
+        <Route path="/signup" element={
+          <RequireUnAuth>
+            <Login isSignUp={true} />
+          </RequireUnAuth>
+        } />
         <Route path="/" element={<Homepage />} />
         <Route path="/recipes" element={
           <RequireAuth>

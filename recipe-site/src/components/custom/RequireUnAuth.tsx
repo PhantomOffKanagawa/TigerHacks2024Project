@@ -24,8 +24,8 @@ export default function RequireAuth({ children }: RequireAuthProps) {
     return <LoadingSpinner />;
   }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/" />;
+  if (isAuthenticated) {
+    return <Navigate to="/recipes" />;
   }
 
   return <>{children}</>;
