@@ -1,0 +1,16 @@
+{
+  "name": "ingredient_trimmer",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "scripts": "node index.js"
+  },
+  "author": "Zack Murry",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "fuse.js": "^7.0.0"
+  }
+}
