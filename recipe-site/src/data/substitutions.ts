@@ -1,6 +1,6 @@
 export const substitutions: { [key: string]: string[] } = {
-    "EGGS": ["MEALWORMS", "TOFU", "BANANA", "CHIA SEEDS"],
-    "BUTTER": ["MARGARINE", "OLIVE OIL", "COCONUT OIL"],
+    "EGGS": ["YOGURT WHITE", "TOFU", "BANANA", "CHIA SEEDS"],
+    "BUTTER": ["MARGARINE", "OLIVE OIL"],
     "STEAK": ["BEEF BONE FREE MEAT", "BEEF MEAT WITH BONE"],
     "COFFEE GROUND": ["COFFEE DRIP FILTERED", "COFFEE SOLUBLE POWDER", "ESPRESSO"],
     "BREAD PLAIN": ["BREAD MULTICEREAL", "BREAD WHOLE"],
@@ -23,7 +23,7 @@ export const substitutions: { [key: string]: string[] } = {
     "PASTA": ["EGG PASTA"],
     "PEANUT": ["ALMOND", "CASHEW NUT", "HAZELNUT", "WALNUT"],
     "TOMATO PUREE": ["TOMATO CHOPPED", "TOMATO PEELED"],
-    "CHEESE": ["MOZZARELLA", "CEDDAR", "EMMENTAL"],
+    "CHEESE": ["MOZZARELLA", "CHEDDAR"],
     "SOY BURGER": ["QUORNE", "TOFU"],
     "WINE RED": ["WINE WHITE"],
     "YEAST COMPRESSED": ["YEAST DRIED", "YEAST LIQUID"]
