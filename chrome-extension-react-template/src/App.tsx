@@ -65,7 +65,7 @@ function App() {
   async function saveRecipe(currentUrl: string, user: User){
     console.log(currentUrl)
         console.log(user.uid)
-        const response = await fetch('https://leangreen.club/api/recipes/save', {
+        const response = await fetch(import.meta.env.VITE_API_ENDPOINT.concat('/recipes/save'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -111,7 +111,7 @@ function App() {
       (async function () {
         console.log(currentUrl)
         console.log(user.uid)
-        const response = await fetch('https://leangreen.club/api/recipes', {
+        const response = await fetch(import.meta.env.VITE_API_ENDPOINT.concat('/recipes'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

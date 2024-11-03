@@ -20,8 +20,26 @@ export const signInWithEmail = (email: string, password: string) => {
 };
 
 // Register a new user
-export const signUpWithEmail = (email: string, password: string) => {
-    return createUserWithEmailAndPassword(auth, email, password);
+export const signUpWithEmail = async (email: string, password: string) => {
+    try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const userId = userCredential.user.uid;
+
+        // Call the register API to save the user in Firestore
+        await fetch(import.meta.env.VITE_API_ENDPOINT.concat('/users/register'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userId }),
+        });
+
+        console.log('User registered successfully in Firestore');
+        return userCredential;
+    } catch (error) {
+        console.error('Error registering user:', error);
+        throw error;
+    }
 };
 
 // Sign out
