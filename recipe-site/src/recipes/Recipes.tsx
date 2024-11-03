@@ -17,6 +17,7 @@ const RecipeList: FC = () => {
   );
 
   recipes = recipes.filter((recipe) => recipe.hasOwnProperty("carbonData"));
+  recipes = recipes.filter((recipe) => Object.values(recipe.carbonData)[0]?.hasOwnProperty("match"));
 
   if (loading) {
     return <LoadingSpinner />;
@@ -57,7 +58,7 @@ const RecipeList: FC = () => {
                     {recipe.averageCarbonScore && (
                       <div className="flex items-center space-x-2">
                         <span className="text-sm text-gray-400">Carbon Score</span>
-                        <span className="text-green-400">
+                        <span className={`${recipe.averageCarbonScore >= 0.7 ? "text-green-400" : recipe.averageCarbonScore >= 0.3 ? "text-yellow-400" : "text-red-400"}`}>
                           {Math.round(recipe.averageCarbonScore * 100)}
                         </span>
                       </div>

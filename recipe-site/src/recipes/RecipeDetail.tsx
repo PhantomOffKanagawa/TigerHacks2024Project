@@ -74,8 +74,9 @@ const RecipeDetail: FC = () => {
   const ecoClasses = (score: number) => {
     if (score >= 70)
       return (
-        <div className="w-full flex items-center space-x-2 p-3 rounded-lg shadow-lg bg-green-900 border border-green-800/30 sticky top-2 bottom-2 z-10">
-          <span className="text-sm text-gray-300 font-medium">Eco Score</span>
+        <div className="w-full flex justify-between items-center space-x-2 p-3 rounded-lg shadow-lg bg-green-900 border border-green-800/30 sticky top-2 bottom-2 z-10">
+          <span className="text-sm text-gray-300 font-medium">Carbon Footprint Score:</span>
+          <div className="flex-1"></div>
           <div className="flex items-center gap-1">
             <span className="text-2xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
               {score}
@@ -89,8 +90,9 @@ const RecipeDetail: FC = () => {
       );
     if (score >= 30)
       return (
-        <div className="w-full flex items-center space-x-2 p-3 rounded-lg shadow-lg bg-yellow-900 border border-yellow-800/30 sticky top-2 bottom-2 z-10">
-          <span className="text-sm text-gray-300 font-medium">Eco Score</span>
+        <div className="w-full flex justify-between items-center space-x-2 p-3 rounded-lg shadow-lg bg-yellow-900 border border-yellow-800/30 sticky top-2 bottom-2 z-10">
+          <span className="text-sm text-gray-300 font-medium">Carbon Footprint Score:</span>
+          <div className="flex-1"></div>
           <div className="flex items-center gap-1">
             <span className="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-amber-400 bg-clip-text text-transparent">
               {score}
@@ -103,9 +105,10 @@ const RecipeDetail: FC = () => {
         </div>
       );
     return (
-      <div className="w-full flex items-center space-x-2 p-3 rounded-lg shadow-lg bg-red-900 border border-red-800/30 sticky top-2 bottom-2 z-10">
-        <span className="text-sm text-gray-300 font-medium">Eco Score</span>
-        <div className="flex items-center gap-1">
+      <div className="w-full flex justify-between items-center space-x-2 p-3 rounded-lg shadow-lg bg-red-900 border border-red-800/30 sticky top-2 bottom-2 z-10">
+        <span className="text-sm text-gray-300 font-medium">Carbon Footprint Score:</span>
+          <div className="flex-1"></div>
+          <div className="flex items-center gap-1">
           <span className="text-2xl font-bold bg-gradient-to-r from-red-400 to-rose-400 bg-clip-text text-transparent">
             {score}
           </span>
@@ -154,13 +157,13 @@ const RecipeDetail: FC = () => {
     let count = 0;
     return Math.round(
       (Object.values(ingredientData).reduce((acc: number, curr: any) => {
-        if (curr.score != -1) count++;
-        return acc + (curr.score == -1 ? 0 : curr.score);
+        if ((curr.substitution != null && curr.substitutionScore != -1) || curr.score != -1) count++;
+        return acc + (curr.substitution != null && curr.substitutionScore != -1 ? curr.substitutionScore : curr.score == -1 ? 0 : curr.score);
       }, 0) /
         count) *
         100
     );
-  }, [recipe]);
+  }, [recipe, ingredientData]);
 
   const currentIngredientScore = useMemo(() => {
     if (ingredientToSubstituteIndex == -1) return -1;
