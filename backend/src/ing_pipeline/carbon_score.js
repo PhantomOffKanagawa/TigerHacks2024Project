@@ -6,6 +6,7 @@ const foods = Object.keys(co2_data)
 
 function countMatchingWords(text, reference) {
   // Convert both strings to lowercase and split into words
+  if (!text) return 0
   const textWords = text.toLowerCase().split(/\s+/)
   const referenceWords = new Set(reference.toLowerCase().split(/\s+/)) // Use a Set for efficient lookup
 
