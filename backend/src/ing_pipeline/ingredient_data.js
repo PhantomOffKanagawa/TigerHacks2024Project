@@ -20,10 +20,11 @@ export default async function getCarbonScoresByRecipe(recipe) {
 
   const carbonData = sanitizedMatch.reduce((acc, curr) => {
     const [sanit, succ] = curr
+    const [score, co2match] = getCarbonScore(sanit)
     if (succ) {
-      acc[sanit] = { emissions: getCarbonScore(sanit) }
+      acc[sanit] = { emissions: score, match: co2match}
     } else {
-      acc[sanit] = {emissions: -1 }
+      acc[sanit] = {emissions: -1, match: 'NONE' }
     }
     return acc
   }, {})

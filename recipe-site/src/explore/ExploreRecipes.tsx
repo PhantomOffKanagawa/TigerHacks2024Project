@@ -13,7 +13,7 @@ import { useAuth } from '@/contexts/AuthContext'
 const ExploreRecipes: FC = () => {
   const { user } = useAuth()
 
-  const recipeData = useRecipes(user?.uid || '')
+  const recipeData = useRecipes(user?.uid ?? '', undefined, true)
   let { recipes } = recipeData
   const { loading, error, refreshRecipes } = recipeData
 

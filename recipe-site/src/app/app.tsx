@@ -6,7 +6,7 @@ import Login from '@/account/login'
 import RequireAuth from 'components/custom/RequireAuth'
 import RequireUnAuth from 'components/custom/RequireUnAuth'
 import About from '@/homepage/about'
-import BrowseRecipes from '@/explore/ExploreRecipes'
+import ExploreRecipes from '@/explore/ExploreRecipes'
 
 function App() {
   return (
@@ -31,10 +31,10 @@ function App() {
           }
         />
         <Route
-          path='/browse'
+          path='/explore'
           element={
             <RequireAuth>
-              <BrowseRecipes />
+              <ExploreRecipes />
             </RequireAuth>
           }
         />

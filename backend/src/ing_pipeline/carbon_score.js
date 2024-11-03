@@ -29,7 +29,7 @@ export default function getCO2ByIngredient(ing) {
   const val = tallies[0].matches
   if (val === 0) {
     // console.log(ing + ' not found!')
-    return -1
+    return [-1, 'NONE']
   }
   const maxes = [tallies[0]]
   for (let i = 1; i < tallies.length; i++) {
@@ -58,14 +58,14 @@ export default function getCO2ByIngredient(ing) {
     const result = fuse.search(ing)
     if (!result.length) {
       //console.log(`${ing} has no results... using ${maxes[0].food}`)
-      return co2_data[maxes[0].food]
+      return [co2_data[maxes[0].food], maxes[0].food]
     }
     const { item, score } = result[0]
     //console.log(`Best fuzzy search result is ${item} with score ${score}`)
     //console.log(`${item} has co2 emissions of ${co2_data[item]}`)
-    return co2_data[item]
+    return [co2_data[item], item]
   } else {
     //console.log(`${exactMatch} has co2 emissions of ${co2_data[exactMatch]}`)
-    return co2_data[exactMatch]
+    return [co2_data[exactMatch], exactMatch]
   }
 }
