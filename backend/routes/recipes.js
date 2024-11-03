@@ -224,7 +224,7 @@ router.get('/all', async function (req, res) {
     const page = parseInt(req.query.p) || 1;
 
     // Set pagination parameters
-    const pageSize = 3;
+    const pageSize = 9;
     let lastVisible = null;
 
     // Reference the recipes collection

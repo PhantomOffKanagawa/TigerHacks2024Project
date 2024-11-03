@@ -39,7 +39,7 @@ export const useRecipes = (
         })
         .then((data) => {
           console.log(data)
-          setRecipes(data)
+          setRecipes(data.recipes)
         })
         .catch((error) => {
           console.error('Error fetching recipe:', error)

@@ -14,10 +14,11 @@ const ExploreRecipes: FC = () => {
   const { user } = useAuth()
 
   const recipeData = useRecipes(user?.uid ?? '', undefined, true)
-  let { recipes } = recipeData
+  const { recipes } = recipeData
   const { loading, error, refreshRecipes } = recipeData
+  console.log({ recipes })
 
-  recipes = recipes.filter((recipe) => recipe.hasOwnProperty('carbonData'))
+  // recipes = recipes.filter((recipe) => recipe.hasOwnProperty('carbonData'))
 
   if (loading) {
     return <LoadingSpinner />
@@ -32,8 +33,8 @@ const ExploreRecipes: FC = () => {
       <ExtensionBanner dismissable={true} />
       <Header />
       <div className='max-w-7xl mx-auto py-12 px-6'>
-        <h1 className='w-min text-4xl font-bold text-white mb-12 mx-auto'>
-          Recipes
+        <h1 className='text-4xl text-center font-bold text-white mb-12 mx-auto'>
+          Browse Recipes
         </h1>
         {recipes.length == 0 ? (
           <div className='text-white text-center text-2xl'>
