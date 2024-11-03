@@ -4,7 +4,7 @@ import { FirebaseError } from "firebase/app";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import LoadingSpinner from "@/components/custom/LoadingSpinner";
-
+import { useNavigate } from "react-router-dom";
 const Auth: React.FC<{ defaultSignUp?: boolean }> = ({ defaultSignUp = false }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -12,7 +12,7 @@ const Auth: React.FC<{ defaultSignUp?: boolean }> = ({ defaultSignUp = false }) 
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(defaultSignUp);
-
+  const navigate = useNavigate();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -99,10 +99,10 @@ const Auth: React.FC<{ defaultSignUp?: boolean }> = ({ defaultSignUp = false }) 
               : "Log In"}
         </Button>
       </form>
-            <div className="h-20 mt-4 text-red-700 px-4 py-3 rounded">
-              {error}
-            </div>
-          
+      <div className="h-20 mt-4 rounded">
+        {error && <div className="bg-red-200/50 text-red-700 rounded h-full p-3 text-center">{error}</div>}
+      </div>
+
       <Button
         variant="link"
         onClick={() => {setIsSignUp(!isSignUp); console.log(isSignUp)}}

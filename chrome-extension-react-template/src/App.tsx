@@ -227,7 +227,7 @@ function App() {
           </CardContent>
           <CardFooter className='absolute bottom-0 flex justify-between w-full'>
             <Button
-              disabled={saved !== 'Saved!'}
+              disabled={saved !== 'Saved!' || !id}
               onClick={() => saveRecipe(currentUrl, user)}
               className='w-[150px] bg-emerald-700 text-white p-2 rounded-md self-center hover:bg-emerald-900 disabled:opacity-50 disabled:cursor-not-allowed'
             >
