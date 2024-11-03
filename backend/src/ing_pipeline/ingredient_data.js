@@ -23,7 +23,7 @@ export default async function getCarbonScoresByRecipe(recipe) {
     if (succ) {
       acc[sanit] = { emissions: getCarbonScore(sanit) }
     } else {
-      acc[sanit] = -1
+      acc[sanit] = {emissions: -1 }
     }
     return acc
   }, {})
