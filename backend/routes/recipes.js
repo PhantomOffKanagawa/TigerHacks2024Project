@@ -149,7 +149,7 @@ router.get('/user/:userID', async (req, res) => {
   }
 });
 
-router.get('/:recipeId', async (req, res) => {
+router.get('/id/:recipeId', async (req, res) => {
   const { recipeId } = req.params;
 
   try {
