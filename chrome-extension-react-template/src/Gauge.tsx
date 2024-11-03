@@ -10,7 +10,7 @@ interface GaugeComponentProps {
       <Gauge
       type="semicircle"
       arc={{
-        colorArray: ['#00FF15', '#FF2121'],
+        colorArray: ['#FF2121', '#00FF15'],
         padding: 0.02,
         subArcs: [
           { limit: 40 },

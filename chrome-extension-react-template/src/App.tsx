@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { RecipeData } from './types/recipe'
+import { Recipe} from './types/recipe'
 // import IngredientScoreBar from './components/ui/IngredientScoreBar'
 import Auth from './components/Auth.tsx'
 import { useAuth } from './contexts/AuthContext.tsx'
@@ -19,7 +19,8 @@ import websiteData from './websites.json'
 
 // let first = true
 
-const sampleRecipe: RecipeData = {
+const sampleRecipe: Recipe = {
+  id: 0,
   title: 'Loading...',
   image: 'https://example.com/lasagna.jpg',
   prep_time: 0,
@@ -64,7 +65,7 @@ function App() {
 
   useEffect(() => {
     if (validUrls.some((url) => currentUrl?.includes(url)) && user) {
-      ;(async function () {
+      (async function () {
         console.log(currentUrl)
         console.log(user.uid)
         const response = await fetch('https://leangreen.club/api/recipes', {
@@ -89,6 +90,9 @@ function App() {
       })()
     }
   }, [currentUrl, validUrls, user])
+
+
+
 
   // if (isUrl && first) {
   //   fetch(
@@ -116,6 +120,7 @@ function App() {
   //     })
   // }
 
+  console.log(recipe.averageCarbonScore)
   return (
     <Card className='w-[350px] rounded-none p-0 border-0 shadow-none bg-emerald-900'>
       {!isUrl ? (
@@ -139,7 +144,7 @@ function App() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <GaugeComponent value={recipe.ecoScore || 0} />
+            <GaugeComponent value={(recipe.averageCarbonScore ?? 0) * 100} />
             <div className='mt-4 space-y-2'>
               <div className='text-sm'>
                 <span className='font-semibold mb-2 block text-white'>
