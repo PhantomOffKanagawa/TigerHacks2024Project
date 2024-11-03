@@ -19,7 +19,10 @@ export default async function getCarbonScoresByRecipe(recipe) {
   //sanitized.push('lamb meat')
 
   const carbonData = sanitized.reduce((acc, curr) => {
-    acc[curr] = { emissions: getCarbonScore(curr) }
+    const [sanit, succ] = curr
+    if (succ) {
+      acc[sanit] = { emissions: getCarbonScore(sanit) }
+    }
     return acc
   }, {})
   //const carbonData = sanitized.map(ingredient => ({[ingredient]: {carbonScore: getCarbonScore(ingredient)}}))

@@ -217,4 +217,29 @@ router.get('/substitutions/:userId/:recipeId', async function (req, res) {
   }
 });
 
+router.get('/all', async function (req, res) {
+  const { userID } = req.params
+
+  try {
+    let recipesQuery = null
+    try {
+      recipesQuery = await db
+        .collection('recipes')
+        .get()
+    } catch (e) {
+      return res.status(500).send([])
+    }
+
+    const recipes = recipesQuery.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }))
+    res.send(recipes)
+  } catch (error) {
+    console.error('Error fetching all recipes:', error)
+    res.status(500).send({ error: 'Internal Server Error' })
+  }
+  
+})
+
 export default router
