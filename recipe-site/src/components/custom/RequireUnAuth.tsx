@@ -1,5 +1,5 @@
-import { Navigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { auth } from '@/utils/firebase.utils';
 import { LoadingSpinner } from '@/components/custom/loading';
 
@@ -10,7 +10,7 @@ interface RequireAuthProps {
 export default function RequireAuth({ children }: RequireAuthProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setIsAuthenticated(!!user);
@@ -25,7 +25,9 @@ export default function RequireAuth({ children }: RequireAuthProps) {
   }
 
   if (isAuthenticated) {
-    return <Navigate to="/recipes" />;
+    setTimeout(() => {
+      navigate("/recipes");
+    }, 100);
   }
 
   return <>{children}</>;
