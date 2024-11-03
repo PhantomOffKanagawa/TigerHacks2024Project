@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Recipe} from './types/recipe'
-// import IngredientScoreBar from './components/ui/IngredientScoreBar'
+import IngredientScoreBar from './components/ui/IngredientScoreBar'
 import Auth from './components/Auth.tsx'
 import { useAuth } from './contexts/AuthContext.tsx'
 import SignOutButton from './components/SignOutButton.tsx'
@@ -41,10 +41,10 @@ const sampleRecipe: Recipe = {
   total_time: 0,
   ecoScore: 0,
   ratings: 0,
-  sanitizedIngredients: [
-    { name: 'Loading', score: 0 },
-    { name: 'Loading', score: 0 },
-  ],
+  carbonData: {
+    'Loading': { emissions: 0.0, score: 0 },
+    'Loading2': { emissions: 0.0, score: 0 },
+  },
 }
 
 function App() {
@@ -150,13 +150,17 @@ function App() {
                 <span className='font-semibold mb-2 block text-white'>
                   Ingredient Scores:
                 </span>
-                {/* {recipe.sanitizedIngredients.map((ingredient, index) => (
-                  <IngredientScoreBar
-                    key={index}
-                    name={ingredient.name}
-                    score={ingredient.score}
-                  />
-                ))} */}
+                {Object.entries(recipe.carbonData)
+                  .sort(([,a], [,b]) => a.score - b.score)
+                  .filter(([,a]) => a.score !== -1) // Filter out -1 scores
+                  .slice(0, 5) // Take top 5
+                  .map(([key], index) => (
+                    <IngredientScoreBar
+                      key={index}
+                      name={key}
+                      score={Math.round(recipe.carbonData[key].score * 10000) / 100}
+                    />
+                  ))}
               </div>
               <div className='text-sm text-white'>
                 <span className='font-semibold'>Rating:</span> {recipe.ratings}
@@ -166,7 +170,7 @@ function App() {
           </CardContent>
           <CardFooter className='flex justify-between'>
             <Button className='bg-emerald-700 text-white p-2 rounded-md w-25 self-center hover:bg-emerald-900'>
-              View Details
+              <a href={"https://leangreen.club/recipes"} target='_blank'>View Details</a>
             </Button>
             <Button className='bg-emerald-700 text-white p-2 rounded-md w-25 self-center hover:bg-emerald-900'>
               Save Recipe

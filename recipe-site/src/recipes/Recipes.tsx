@@ -12,9 +12,11 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const RecipeList: FC = () => {
   const { user } = useAuth();
-  const { recipes, loading, error, refreshRecipes } = useRecipes(
+  let { recipes, loading, error, refreshRecipes } = useRecipes(
     user?.uid || ""
   );
+
+  recipes = recipes.filter((recipe) => recipe.hasOwnProperty("carbonData"));
 
   if (loading) {
     return <LoadingSpinner />;
@@ -43,7 +45,7 @@ const RecipeList: FC = () => {
                 key={recipe.canonical_url}
                 className="bg-card p-6 rounded-lg"
               >
-                <Skeleton className="bg-gray-700/10 w-full h-[150px] rounded-lg" />
+                <img className="bg-gray-700/10 w-full h-[150px] rounded-lg" src={recipe.image} alt={recipe.title} />
                 <div className="space-y-4 py-2">
                   <Link to={`/recipes/${recipe.id}`}>
                     <h2 className="text-xl font-semibold text-white underline">
@@ -52,18 +54,12 @@ const RecipeList: FC = () => {
                   </Link>
                   <p className="text-gray-400">{recipe.description}</p>
                   <div className="flex justify-between items-center">
-                    {recipe.ecoScore && (
+                    {recipe.averageCarbonScore && (
                       <div className="flex items-center space-x-2">
-                        <span className="text-sm text-gray-400">Eco Score</span>
+                        <span className="text-sm text-gray-400">Carbon Score</span>
                         <span className="text-green-400">
-                          {recipe.ecoScore}
+                          {recipe.averageCarbonScore.toFixed(2)}
                         </span>
-                      </div>
-                    )}
-                    {recipe.rating && (
-                      <div className="flex items-center space-x-2">
-                        <span className="text-sm text-gray-400">Rating</span>
-                        <span className="text-blue-400">{recipe.rating}/5</span>
                       </div>
                     )}
                   </div>
