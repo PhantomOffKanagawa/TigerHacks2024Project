@@ -54,35 +54,38 @@ function App() {
   const [recipe, setRecipe] = useState(sampleRecipe)
   const { user } = useAuth()
   const validUrls = websiteData.websites
-  const [saved, setSaved] = useState('Save Recipe');
-  const [id, setId] = useState('');
+  const [saved, setSaved] = useState('Save Recipe')
+  const [id, setId] = useState('')
 
   async function saveRecipe(currentUrl: string, user: User) {
     console.log(currentUrl)
-        console.log(user.uid)
-        const response = await fetch(import.meta.env.VITE_API_ENDPOINT.concat('/recipes/save'), {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            url: currentUrl,
-            userId: user.uid
-          }),
-        })
-        if (response.ok) {
-          const data = await response.json()
-          console.log("SAVE")
-          console.log(data)
-          if (data['recipeId']) {
-            setId(data['recipeId'])
-          } else {
-            console.error('no recipe returned')
-          }
-        } else {
-          console.error('Error fetching recipes', response.status)
-        }
-      setSaved('Saved!')
-  } 
-  
+    console.log(user.uid)
+    const response = await fetch(
+      import.meta.env.VITE_API_ENDPOINT.concat('/recipes/save'),
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          url: currentUrl,
+          userId: user.uid,
+        }),
+      },
+    )
+    if (response.ok) {
+      const data = await response.json()
+      console.log('SAVE')
+      console.log(data)
+      if (data['recipeId']) {
+        setId(data['recipeId'])
+      } else {
+        console.error('no recipe returned')
+      }
+    } else {
+      console.error('Error fetching recipes', response.status)
+    }
+    setSaved('Saved!')
+  }
+
   useEffect(() => {
     // Query the active tab and get its URL
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -103,19 +106,22 @@ function App() {
 
   useEffect(() => {
     if (validUrls.some((url) => currentUrl?.includes(url)) && user) {
-      (async function () {
+      ;(async function () {
         console.log(currentUrl)
         console.log(user.uid)
-        const response = await fetch(import.meta.env.VITE_API_ENDPOINT.concat('/recipes'), {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            url: currentUrl
-          }),
-        })
+        const response = await fetch(
+          import.meta.env.VITE_API_ENDPOINT.concat('/recipes'),
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              url: currentUrl,
+            }),
+          },
+        )
         if (response.ok) {
           const data = await response.json()
-          console.log("FETCHED")
+          console.log('FETCHED')
           console.log(data)
           if (data['recipe']) {
             setRecipe(data['recipe'])
@@ -173,8 +179,10 @@ function App() {
       ) : (
         <>
           <CardHeader>
-            <CardTitle className='text-white'>{recipe.title}</CardTitle>
-            <CardDescription className='text-gray-300'>
+            <CardTitle className='text-white text-base'>
+              {recipe.title}
+            </CardTitle>
+            <CardDescription className='text-gray-300 text-xs'>
               {truncatedDescription}
             </CardDescription>
           </CardHeader>
@@ -194,7 +202,7 @@ function App() {
                   .map(([key], index) => (
                     <IngredientScoreBar
                       key={index}
-                      name={smartTruncate(key, 35)}
+                      name={smartTruncate(key, 30)}
                       score={Math.round(recipe.carbonData[key].score * 100)}
                     />
                   ))}
