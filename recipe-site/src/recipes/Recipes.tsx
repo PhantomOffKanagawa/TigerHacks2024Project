@@ -12,12 +12,12 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const RecipeList: FC = () => {
   const { user } = useAuth();
-  let { recipes, loading, error, refreshRecipes } = useRecipes(
-    user?.uid || ""
-  );
+  let { recipes, loading, error, refreshRecipes } = useRecipes(user?.uid || "");
 
   recipes = recipes.filter((recipe) => recipe.hasOwnProperty("carbonData"));
-  recipes = recipes.filter((recipe) => Object.values(recipe.carbonData)[0]?.hasOwnProperty("match"));
+  recipes = recipes.filter((recipe) =>
+    Object.values(recipe.carbonData)[0]?.hasOwnProperty("match")
+  );
 
   if (loading) {
     return <LoadingSpinner />;
@@ -46,21 +46,53 @@ const RecipeList: FC = () => {
                 key={recipe.canonical_url}
                 className="bg-card p-6 rounded-lg flex flex-col"
               >
-                <img className="bg-gray-700/10 w-full h-[250px] rounded-lg object-cover" src={recipe.image} alt={recipe.title} />
+                <img
+                  className="bg-gray-700/10 w-full h-[250px] rounded-lg object-cover"
+                  src={recipe.image}
+                  alt={recipe.title}
+                />
                 <div className="space-y-4 py-2 flex-1 flex flex-col">
                   <Link to={`/recipes/${recipe.id}`}>
                     <h2 className="text-xl font-semibold text-white underline">
                       {recipe.title}
                     </h2>
                   </Link>
-                  <p className="text-gray-400 flex-grow">{recipe.description}</p>
+                  <p className="text-gray-200 flex-grow">
+                    {recipe.description}
+                  </p>
                   <div className="flex justify-between items-center mt-auto">
                     {recipe.averageCarbonScore && (
-                      <div className="flex items-center space-x-2">
-                        <span className="text-sm text-gray-400">Carbon Score</span>
-                        <span className={`${recipe.averageCarbonScore >= 0.7 ? "text-green-400" : recipe.averageCarbonScore >= 0.3 ? "text-yellow-400" : "text-red-400"}`}>
-                          {Math.round(recipe.averageCarbonScore * 100)}
-                        </span>
+                      <div className="mb-[-10px] flex w-full flex-col space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-300">
+                            Carbon Score
+                          </span>
+                          <span
+                            className={`text-sm ${
+                              recipe.averageCarbonScore >= 0.7
+                                ? "text-green-400"
+                                : recipe.averageCarbonScore >= 0.3
+                                  ? "text-yellow-400"
+                                  : "text-red-400"
+                            }`}
+                          >
+                            {Math.round(recipe.averageCarbonScore * 100)}
+                          </span>
+                        </div>
+                        <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full rounded-full ${
+                              recipe.averageCarbonScore >= 0.7
+                                ? "bg-green-400"
+                                : recipe.averageCarbonScore >= 0.3
+                                  ? "bg-yellow-400"
+                                  : "bg-red-400"
+                            }`}
+                            style={{
+                              width: `${Math.round(recipe.averageCarbonScore * 100)}%`,
+                            }}
+                          />
+                        </div>
                       </div>
                     )}
                   </div>
