@@ -3,7 +3,7 @@ type FoodItem = {
   score: number;
 }
 
-import { substitutions } from "@/data/substitutions";
+import { substitutions, getAllSubstitutions } from "@/data/substitutions";
 import { co2Data } from "@/data/co2_data";
   
   export function getSubstitutions(ingredientName: string, currentSubstitution?: string): FoodItem[] {
@@ -19,7 +19,7 @@ import { co2Data } from "@/data/co2_data";
     if (!originalItem) return [];
     
     // Get possible substitutions from the map
-    let substitutes = substitutions[originalItem] || [];
+    let substitutes = getAllSubstitutions(currentSubstitution ? currentSubstitution : originalItem) || [];
     
     // Remove the current substitution from the list if it exists
     if (currentSubstitution && substitutes.includes(currentSubstitution)) {
@@ -46,5 +46,5 @@ import { co2Data } from "@/data/co2_data";
       item => item.toUpperCase() === normalizedName
     );
     
-    return originalItem ? substitutions[originalItem]?.length > 0 : false;
+    return originalItem ? getAllSubstitutions(originalItem).length > 0 : false;
   }
