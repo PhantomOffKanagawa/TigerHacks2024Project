@@ -96,6 +96,9 @@ router.post('/save', async function (req, res) {
       data['carbonData'] = carbonData
       data['averageCarbonScore'] = avg
       data['sanitizedIngredients'] = sanitizeIngredients(data.ingredients)
+      if (Object.keys(carbonData).length === 0 || averageCarbonScore === 0) {
+        return res.status(400).send({ error: 'Failed to get carbon data'})
+      }
       await recipeRef.set(data)
     }
 
