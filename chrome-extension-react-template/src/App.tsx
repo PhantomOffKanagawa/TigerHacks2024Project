@@ -21,9 +21,6 @@ import { User } from 'firebase/auth'
 
 // let first = true
 
-
-
-
 const sampleRecipe: Recipe = {
   id: 0,
   title: 'Loading...',
@@ -52,16 +49,14 @@ const sampleRecipe: Recipe = {
   },
 }
 
-
-
 function App() {
   const [currentUrl, setCurrentUrl] = useState('')
   const [recipe, setRecipe] = useState(sampleRecipe)
   const { user } = useAuth()
   const validUrls = websiteData.websites
-  const [saved, setSaved] = useState('Save Recipe');
+  const [saved, setSaved] = useState('Save Recipe')
 
-  function saveRecipe(currentUrl: string, user: User){
+  function saveRecipe(currentUrl: string, user: User) {
     console.log(currentUrl)
     console.log(user.uid)
     fetch('https://leangreen.club/api/recipes/save', {
@@ -73,8 +68,8 @@ function App() {
       }),
     })
     setSaved('Saved!')
-  } 
-  
+  }
+
   useEffect(() => {
     // Query the active tab and get its URL
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -95,14 +90,14 @@ function App() {
 
   useEffect(() => {
     if (validUrls.some((url) => currentUrl?.includes(url)) && user) {
-      (async function () {
+      ;(async function () {
         console.log(currentUrl)
         console.log(user.uid)
         const response = await fetch('https://leangreen.club/api/recipes', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            url: currentUrl
+            url: currentUrl,
           }),
         })
         if (response.ok) {
@@ -171,7 +166,7 @@ function App() {
           </CardHeader>
           <CardContent>
             <div className='-mt-7'>
-              <GaugeComponent value={ecoScore} />
+              <GaugeComponent value={Math.round(ecoScore)} />
             </div>
             <div className='mt-1 space-y-2'>
               <div className='text-sm'>
@@ -185,20 +180,30 @@ function App() {
                   .map(([key], index) => (
                     <IngredientScoreBar
                       key={index}
-                      name={key}
-                      score={
-                        Math.round(recipe.carbonData[key].score * 10000) / 100
-                      }
+                      name={smartTruncate(key, 35)}
+                      score={Math.round(recipe.carbonData[key].score * 100)}
                     />
                   ))}
               </div>
             </div>
           </CardContent>
           <CardFooter className='flex justify-between'>
-            <Button onClick ={() => saveRecipe(currentUrl, user)} className='bg-emerald-700 text-white p-2 rounded-md w-25 self-center hover:bg-emerald-900'>
-              <a className='text-white' href={"https://leangreen.club/recipes/" + recipe.id} target='_blank'>View Details</a>
+            <Button
+              onClick={() => saveRecipe(currentUrl, user)}
+              className='bg-emerald-700 text-white p-2 rounded-md w-25 self-center hover:bg-emerald-900'
+            >
+              <a
+                className='text-white'
+                href={'https://leangreen.club/recipes/' + recipe.id}
+                target='_blank'
+              >
+                View Details
+              </a>
             </Button>
-            <Button onClick={() => saveRecipe(currentUrl, user)} className='bg-emerald-700 text-white p-2 rounded-md w-25 self-center hover:bg-emerald-900'>
+            <Button
+              onClick={() => saveRecipe(currentUrl, user)}
+              className='bg-emerald-700 text-white p-2 rounded-md w-25 self-center hover:bg-emerald-900'
+            >
               {saved}
             </Button>
             <SignOutButton />
