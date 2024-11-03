@@ -31,7 +31,7 @@ router.post('/', async function (req, res) {
         .send({ error: 'Failed to fetch data from the external API.' })
     }
 
-    const data = await response.json()
+    let data = await response.json()
 
     let recipeRef
     const recipeQuery = await db
@@ -43,6 +43,7 @@ router.post('/', async function (req, res) {
     if (!recipeQuery.empty) {
       console.log('not empty')
       recipeRef = recipeQuery.docs[0].ref
+      data = recipeQuery.docs[0].data()
     } else {
       recipeRef = db.collection('recipes').doc()
       //   console.log('Need new data')
