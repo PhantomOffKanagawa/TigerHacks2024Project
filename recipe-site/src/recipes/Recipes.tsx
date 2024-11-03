@@ -9,10 +9,13 @@ import { ErrorDisplay } from "@/components/custom/error";
 import { Header } from "@/components/custom/header";
 import { ExtensionBanner } from "components/custom/ExtensionBanner";
 import { useAuth } from "@/contexts/AuthContext";
+import { User } from "firebase/auth";
+import { Input } from "components/ui/input";
+import { Button } from "components/ui/button";
 
 const RecipeList: FC = () => {
   const { user } = useAuth();
-  let { recipes, loading, error, refreshRecipes } = useRecipes(user?.uid || "");
+  let { recipes, loading, error, refreshRecipes, saveRecipe } = useRecipes(user?.uid || "");
 
   recipes = recipes.filter((recipe) => recipe.hasOwnProperty("carbonData"));
   recipes = recipes.filter((recipe) =>
@@ -31,10 +34,51 @@ const RecipeList: FC = () => {
     <div className="h-full w-full bg-background">
       <ExtensionBanner dismissable={true} />
       <Header />
-      <div className="max-w-7xl mx-auto py-12 px-6">
-        <h1 className="w-min text-4xl font-bold text-white mb-12 mx-auto">
-          Recipes
-        </h1>
+      <main className="bg-emerald-800/10 py-12 px-6">
+        <div className="max-w-6xl mx-auto">
+          {user && <h1 className="text-white text-center mb-4 text-4xl">Hello {user.email}</h1>}
+          <h4 className="w-min text-2xl font-bolxd text-white mb-12 mx-auto">
+            Recipes
+        </h4>
+        {user && (
+          <div className='flex gap-4 max-w-2xl mx-auto mb-12 bg-white/5 p-6 rounded-lg shadow-lg'>
+<Input
+  type='text'
+  name='url'
+  className='flex-1 rounded-lg bg-white/10 border-0 text-white placeholder:text-gray-400 focus:border-emerald-500'
+  placeholder='Paste a recipe URL to import...'
+  id='recipeUrl'
+  onKeyDown={async (e) => {
+    if (e.key === 'Enter') {
+      const input = document.getElementById('recipeUrl') as HTMLInputElement;
+      try {
+        await saveRecipe(input.value, user);
+        input.value = ''; // Clear input after successful save
+      } catch (err) {
+        console.error('Failed to save recipe:', err);
+      }
+    }
+  }}
+/>
+<Button
+  className='px-6 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center gap-2'
+  onClick={async () => {
+    const input = document.getElementById('recipeUrl') as HTMLInputElement;
+    try {
+      await saveRecipe(input.value, user);
+      input.value = ''; // Clear input after successful save
+    } catch (err) {
+      console.error('Failed to save recipe:', err);
+    }
+  }}
+>
+              <span>Add Recipe</span>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+            </Button>
+          </div>
+        )}
         {recipes.length == 0 ? (
           <div className="text-white text-center text-2xl">
             No recipes found
@@ -101,7 +145,8 @@ const RecipeList: FC = () => {
             ))}
           </div>
         )}
-      </div>
+        </div>
+      </main>
     </div>
   );
 };

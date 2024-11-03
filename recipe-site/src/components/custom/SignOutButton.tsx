@@ -1,8 +1,8 @@
 import React from 'react';
 import { signOutApp } from  "@/utils/firebase.utils.ts";
 import { useNavigate } from 'react-router-dom';
-
-const SignOutButton: React.FC = () => {
+import { Button } from '@/components/ui/button';
+const SignOutButton: React.FC<{ className?: string }> = ({ className }) => {
     const navigate = useNavigate();
     const handleSignOut = async () => {
         try {
@@ -14,7 +14,7 @@ const SignOutButton: React.FC = () => {
         }
     };
 
-    return <button onClick={handleSignOut}>Sign Out</button>;
+    return <Button onClick={handleSignOut} className={className}>Sign Out</Button>;
 };
 
 export default SignOutButton;

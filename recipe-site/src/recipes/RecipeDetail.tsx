@@ -21,6 +21,7 @@ import {
   hasSubstitutions,
 } from "@/utils/substitutions.utils";
 import { useAuth } from "@/contexts/AuthContext";
+import LoadingSpinner from "@/components/custom/LoadingSpinner";
 
 import { co2Data } from "@/data/co2_data";
 import { substitutions } from "@/data/substitutions";
@@ -38,11 +39,16 @@ const RecipeDetail: FC = () => {
     refreshSubstitutions,
     setRecipeSubstitutions,
     substitutions,
+    isUserRecipe,
+    saveRecipe,
+    refreshRecipes,
   } = useRecipes(user?.uid || "", id);
 
   const [showSubstitutes, setShowSubstitutes] = useState(false);
   const [ingredientToSubstituteIndex, setIngredientToSubstituteIndex] = useState(-1);
   const [specificSubstitutions, setSpecificSubstitutions] = useState(null);
+
+  const [isSaving, setSaving] = useState(false);
 
   const returnSubstitutionButton = (index: number) => {
     const ingredient = ingredientData[index];
@@ -124,11 +130,15 @@ const RecipeDetail: FC = () => {
       return [];
     }
   
+    if (Object.values(recipe.carbonData)[0].hasOwnProperty("match") == false) {
+      setError(new Error("Improper data found"));
+      return [];
+    }
+  
     if (recipe.sanitizedIngredients == null) {
       setError(new Error("No sanitized ingredients found"));
       return [];
     }
-  
     console.log(recipe);
   
     const ingredients = recipe.ingredients;
@@ -164,21 +174,11 @@ const RecipeDetail: FC = () => {
     return ingredientData[ingredientToSubstituteIndex].substitutionScore != -1 ? ingredientData[ingredientToSubstituteIndex].substitutionScore : ingredientData[ingredientToSubstituteIndex].score;
   }, [ingredientData, ingredientToSubstituteIndex]);
 
-  if (loading) {
+  if (loading || isSaving) {
     return (
       <div className="bg-background min-h-screen">
         <Header />
-        <div className="max-w-4xl mx-auto py-12 px-6">
-          <Card className="p-8 rounded-lg">
-            <Skeleton className="h-8 w-3/4 mb-4" />
-            <Skeleton className="aspect-video w-full mb-6" />
-            <div className="space-y-4">
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-3/4" />
-              <Skeleton className="h-4 w-1/2" />
-            </div>
-          </Card>
-        </div>
+        <LoadingSpinner />
       </div>
     );
   }
@@ -283,16 +283,41 @@ const RecipeDetail: FC = () => {
           </DialogContent>
         </Dialog>
       )}
-
-      <div className="max-w-4xl mx-auto py-12 px-6">
-        <button
-          onClick={() => navigate("/recipes")}
+  
+      <main className="bg-emerald-800/10 mx-auto py-12 px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center justify-between">
+            <button
+              onClick={() => navigate("/recipes")}
           className="mb-6 text-gray-200 hover:text-white transition-colors"
         >
           ← Back to Recipes
         </button>
 
-        <Card className="p-8 rounded-lg">
+        {!isUserRecipe(id || "") && (
+    <Button 
+      variant="outline" 
+      className="ml-auto text-gray-200 hover:text-white hover:bg-emerald-800/20 transition-colors mb-4 flex items-center gap-2" 
+      onClick={async () => {
+        setSaving(true);
+        await saveRecipe(recipe.canonical_url || "", user);
+        await refreshRecipes(); // Add this to refresh the recipes list
+        setSaving(false);
+      }}
+      disabled={isSaving}
+    >
+      {isSaving ? (
+        <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
+      ) : (
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+        </svg>
+      )}
+      {isSaving ? 'Saving...' : 'Save Recipe'}
+    </Button>
+  )}
+          </div>
+        <Card className="max-w-4xl mx-auto bg-card/40 p-8 rounded-lg">
           <a
             href={recipe.canonical_url}
             target="_blank"
@@ -397,9 +422,10 @@ const RecipeDetail: FC = () => {
                 )}
               </ol>
             </div>
-          </div>
-        </Card>
-      </div>
+            </div>
+          </Card>
+        </div>
+      </main>
     </div>
   );
 };

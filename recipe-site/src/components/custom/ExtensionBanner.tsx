@@ -10,6 +10,10 @@ export const ExtensionBanner: FC<{ dismissable: boolean }> = ({
   if (!isVisible) return null
 
   if (dismissable) {
+    if (localStorage.getItem('extensionBannerDismissed') === 'true') {
+      return null
+    }
+
     return (
       <div className='fixed bottom-0 left-0 w-full bg-primary-600 border-b border-primary/20 px-4 py-2'>
         <div className='flex justify-between items-center'>
@@ -26,7 +30,10 @@ export const ExtensionBanner: FC<{ dismissable: boolean }> = ({
             </a>
           </p>
           <button
-            onClick={() => setIsVisible(false)}
+            onClick={() => {
+              setIsVisible(false)
+              localStorage.setItem('extensionBannerDismissed', 'true')
+            }}
             className='text-primary/60 hover:text-primary'
             aria-label='Close banner'
           >
@@ -43,8 +50,8 @@ export const ExtensionBanner: FC<{ dismissable: boolean }> = ({
         rel='noopener noreferrer'
         className='inline-block group'
       >
-        <div className='fixed bottom-0 left-1/2 -translate-x-1/2 w-[95%] mx-auto flex items-center justify-center p-4 bg-[#004D40]/90 backdrop-blur'>
-          <div className='w-full flex items-center space-x-4 bg-[#00BFA5] hover:bg-[#00A896] transition-all transform hover:scale-105 rounded-lg py-4 px-8'>
+        <div className='fixed bottom-0 left-1/2 -translate-x-1/2 w-[95%] mx-auto flex items-center justify-center p-4 backdrop-blur'>
+          <div className='w-full flex items-center space-x-4 bg-emerald-600 hover:bg-emerald-700 transition-all transform hover:scale-105 rounded-lg py-4 px-8'>
             <div
               className='w-12 h-12 p-0 mt-[-24px] ms-[-12px]'
               style={{ fontSize: '48px' }}

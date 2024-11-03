@@ -3,38 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/contexts/AuthContext'
 import SignOutButton from './SignOutButton'
-import { User } from 'firebase/auth'
-import { Input } from 'components/ui/input'
 interface HeaderProps {
   showLogins?: boolean
-}
-
-async function saveRecipe(currentUrl: string, user: User) {
-  console.log(currentUrl)
-  console.log(user.uid)
-  const response = await fetch(
-    import.meta.env.VITE_API_ENDPOINT.concat('/recipes/save'),
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        url: currentUrl,
-        userId: user.uid,
-      }),
-    },
-  )
-  if (response.ok) {
-    const data = await response.json()
-    console.log('SAVE')
-    console.log(data)
-    if (data['recipeId']) {
-      return
-    } else {
-      console.error('no recipe returned')
-    }
-  } else {
-    console.error('Error fetching recipes', response.status)
-  }
 }
 
 export const Header: FC<HeaderProps> = ({ showLogins = true }) => {
@@ -53,7 +23,12 @@ export const Header: FC<HeaderProps> = ({ showLogins = true }) => {
           >
             <div className='text-2xl font-bold'>Lean Green</div>
           </Button>
-          <button onClick={() => navigate('/explore')}>Explore</button>
+          {user && (
+            <>
+              <Button className='text-white bg-primary-600/20 hover:bg-primary-700/20' onClick={() => navigate('/explore')}>Explore</Button>
+              <Button className='text-white bg-primary-600/20 hover:bg-primary-700/20' onClick={() => navigate('/recipes')}>Recipes</Button>
+            </>
+          )}
         </div>
         {/* <Button
           variant='ghost'
@@ -62,30 +37,8 @@ export const Header: FC<HeaderProps> = ({ showLogins = true }) => {
         >
           <div className='text-2xl font-bold'>Explore</div>
         </Button> */}
-        {user && <div className='min-w'>Hello {user.email}</div>}
-        {user && (
-          <div className='flex gap-3'>
-            <Input
-              type='text'
-              name='url'
-              className='rounded px-2'
-              placeholder='Enter a URL...'
-              id='recipeUrl'
-            />
-            <button
-              className='w-[150px]'
-              onClick={() => {
-                const url = (
-                  document.getElementById('recipeUrl') as HTMLInputElement
-                ).value
-                saveRecipe(url, user)
-              }}
-            >
-              Add Recipe
-            </button>
-          </div>
-        )}
-        <div className='space-x-2'>
+
+        <div className='space-x-2 flex'>
           {!user && showLogins ? (
             <>
               <Button
@@ -103,7 +56,7 @@ export const Header: FC<HeaderProps> = ({ showLogins = true }) => {
               </Button>
             </>
           ) : showLogins ? (
-            <SignOutButton />
+            <SignOutButton className='text-white bg-primary-600/20 hover:bg-primary-700/20' />
           ) : null}
         </div>
       </div>

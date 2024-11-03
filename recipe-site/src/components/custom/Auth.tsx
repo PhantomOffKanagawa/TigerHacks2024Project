@@ -62,6 +62,7 @@ const Auth: React.FC<{ defaultSignUp?: boolean }> = ({ defaultSignUp = false }) 
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
+            className="h-[36px]"
             required
           />
         </div>
@@ -74,18 +75,20 @@ const Auth: React.FC<{ defaultSignUp?: boolean }> = ({ defaultSignUp = false }) 
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
+            className="h-[36px]"
             required
           />
         </div>
-        {isSignUp && (
+        {isSignUp ? (
           <Input
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             placeholder="Confirm Password"
+            className="h-[36px]"
             required
           />
-        )}
+        ) : <div className="h-[36px] py-3"></div>}
         <Button type="submit" disabled={loading} className="w-full">
           {loading
             ? isSignUp
@@ -96,15 +99,14 @@ const Auth: React.FC<{ defaultSignUp?: boolean }> = ({ defaultSignUp = false }) 
               : "Log In"}
         </Button>
       </form>
-      {error && (
-            <div className="mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+            <div className="h-20 mt-4 text-red-700 px-4 py-3 rounded">
               {error}
             </div>
-          )}
+          
       <Button
         variant="link"
         onClick={() => {setIsSignUp(!isSignUp); console.log(isSignUp)}}
-        className="bg-blue-900/10 text-blue-500 focus:text-blue-400 hover:text-blue-600 mt-4 mx-auto w-full"
+        className="text-gray-200 focus:text-gray-300 hover:text-gray-300 mt-4 mb-[-20px]mx-auto w-full"
       >
         {isSignUp
           ? "Already have an account? Log in."

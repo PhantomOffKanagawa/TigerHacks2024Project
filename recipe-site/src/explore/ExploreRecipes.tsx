@@ -33,8 +33,9 @@ const ExploreRecipes: FC = () => {
     <div className='h-full w-full bg-background'>
       <ExtensionBanner dismissable={true} />
       <Header />
-      <div className='max-w-7xl mx-auto py-12 px-6'>
-        <h1 className='text-4xl text-center font-bold text-white mb-12 mx-auto'>
+      <main className='bg-emerald-800/10 py-12 px-6'>
+        <div className='max-w-7xl mx-auto'>
+          <h1 className='text-4xl text-center font-bold text-white mb-12 mx-auto'>
           Explore Recipes
         </h1>
         {recipes.length == 0 ? (
@@ -68,7 +69,13 @@ const ExploreRecipes: FC = () => {
                         <span className='text-sm text-gray-400'>
                           Carbon Score
                         </span>
-                        <span className='text-green-400'>
+                        <span className={`text-sm ${
+                              recipe.averageCarbonScore >= 0.7
+                                ? "text-green-400"
+                                : recipe.averageCarbonScore >= 0.3
+                                  ? "text-yellow-400"
+                                  : "text-red-400"
+                            }`}>
                           {Math.round(recipe.averageCarbonScore * 100)}
                         </span>
                       </div>
@@ -80,12 +87,13 @@ const ExploreRecipes: FC = () => {
           </div>
         )}
       </div>
-      {recipes.length % 9 === 0 && (
-        <Button onClick={loadNextPage} disabled={loading} className='w-full'>
-          Load more
-        </Button>
+        {recipes.length % 9 === 0 && (
+          <Button onClick={loadNextPage} disabled={loading} className='w-full'>
+            Load more
+          </Button>
       )}
-      <div className='h-20' />
+        <div className='h-20' />
+      </main>
     </div>
   )
 }

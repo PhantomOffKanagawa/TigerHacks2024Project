@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Recipe, Substitutions } from "@/types/recipe";
 import { RecipeService } from "@/services/recipe.service";
-
+import { User } from "firebase/auth";
 interface UseRecipesReturn {
   recipes: Recipe[]
   recipe: Recipe | null
@@ -13,7 +13,9 @@ interface UseRecipesReturn {
   loadNextPage: () => void
   refreshSubstitutions: (recipeId: string, userId: string) => Promise<void>;
   setRecipeSubstitutions: (recipeId: string, userId: string) => Promise<void>;
-  setError: (error: Error | null) => void
+  saveRecipe: (currentUrl: string, user: User) => Promise<void>;
+  setError: (error: Error | null) => void;
+  isUserRecipe: (recipeId: string) => boolean;
 }
 
 export const useRecipes = (
@@ -29,6 +31,48 @@ export const useRecipes = (
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [page, setPage] = useState<number>(1)
+
+
+  const isUserRecipe = (recipeId: string) => {
+    return recipes.some((recipe) => recipe.id === recipeId);
+  }
+
+  const saveRecipe = async (currentUrl: string, user: User) => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        import.meta.env.VITE_API_ENDPOINT.concat('/recipes/save'),
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            url: currentUrl,
+            userId: user.uid,
+          }),
+        },
+      );
+  
+      if (!response.ok) {
+        throw new Error('Failed to save recipe');
+      }
+  
+      const data = await response.json();
+      if (data.recipe) {
+        // Fetch the updated recipe list instead of manually updating
+        await fetchRecipes();
+        return data;
+      } else {
+        throw new Error('No recipe returned');
+      }
+    } catch (error) {
+      console.error('Error saving recipe:', error);
+      setError(error instanceof Error ? error : new Error('Failed to save recipe'));
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+  
 
   const fetchRecipesByPage = async (pg: number) => {
     try {
@@ -84,6 +128,10 @@ export const useRecipes = (
         })
         .then((data) => {
           console.log(data)
+          // data = data.filter((recipe: Recipe) => recipe.hasOwnProperty("carbonData"));
+          // data = data.filter((recipe: Recipe) =>
+          //   Object.values(recipe.carbonData)[0]?.hasOwnProperty("match")
+          // );
           setRecipes((r) => [...r, ...data.recipes])
         })
         .catch((error) => {
@@ -119,6 +167,13 @@ export const useRecipes = (
         })
         .then((data) => {
           console.log(data)
+
+
+          // data = data.filter((recipe: Recipe) => recipe.hasOwnProperty("carbonData"));
+          // data = data.filter((recipe: Recipe) =>
+          //   Object.values(recipe.carbonData)[0]?.hasOwnProperty("match")
+          // );
+
           setRecipes(data)
         })
         .catch((error) => {
@@ -250,12 +305,16 @@ export const useRecipes = (
   useEffect(() => {
     if (browse) {
       fetchRecipesByPage(1)
-    } else if (recipeId) {
-      fetchRecipe(recipeId)
     } else {
       fetchRecipes()
     }
   }, [userId, recipeId]);
+
+  useEffect(() => {
+    if (recipeId) {
+      fetchRecipe(recipeId)
+    }
+  }, [recipes]);
 
   useEffect(() => {
     if (recipe) {
@@ -274,6 +333,8 @@ export const useRecipes = (
     refreshRecipe: fetchRecipe,
     refreshSubstitutions: fetchSubstitutions,
     setRecipeSubstitutions: setRecipeSubstitutions,
+    saveRecipe: saveRecipe,
     setError,
+    isUserRecipe,
   }
 }
