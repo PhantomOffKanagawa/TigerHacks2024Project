@@ -4,6 +4,7 @@ import { db } from '../config/firebase.js'
 import admin from 'firebase-admin'
 import dotenv from 'dotenv'
 import getCarbonScoresByRecipe from '../src/ing_pipeline/ingredient_data.js'
+import sanitizeIngredients from "../src/ing_pipeline/parse_ingredients.js";
 
 dotenv.config()
 const router = express.Router()
@@ -51,6 +52,7 @@ router.post('/', async function (req, res) {
       const [carbonData, avg] = await getCarbonScoresByRecipe(data)
       data['carbonData'] = carbonData
       data['averageCarbonScore'] = avg
+      data['sanitizedIngredients'] = sanitizeIngredients(data.ingredients)
       await recipeRef.set(data)
     }
 
