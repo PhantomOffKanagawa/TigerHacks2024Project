@@ -25,7 +25,7 @@ export const useRecipes = (
       setLoading(true);
       setError(null);
 
-      fetch("https://leangreen.club/api/recipe/user/" + "eCnhaak7jdR7nSScqEWVZGdqzZd2", {
+      fetch("https://leangreen.club/api/recipes/user/" + userId, {
         method: "GET",
       })
         .then((res) => {
@@ -74,10 +74,6 @@ export const useRecipes = (
       setLoading(false);
     }
   };
-
-  if (Math.random() < 0.1) {
-    setError(new Error("Failed to fetch recipes (Random 1/10 chance)"));
-  }
 
   // Initial fetch
   useEffect(() => {
