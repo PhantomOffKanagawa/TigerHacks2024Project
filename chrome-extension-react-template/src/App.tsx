@@ -54,22 +54,35 @@ function App() {
   const [recipe, setRecipe] = useState(sampleRecipe)
   const { user } = useAuth()
   const validUrls = websiteData.websites
-  const [saved, setSaved] = useState('Save Recipe')
+  const [saved, setSaved] = useState('Save Recipe');
+  const [id, setId] = useState('');
 
-  function saveRecipe(currentUrl: string, user: User) {
+  async function saveRecipe(currentUrl: string, user: User){
     console.log(currentUrl)
-    console.log(user.uid)
-    fetch('https://leangreen.club/api/recipes/save', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        url: currentUrl,
-        userId: user.uid,
-      }),
-    })
-    setSaved('Saved!')
-  }
-
+        console.log(user.uid)
+        const response = await fetch('https://leangreen.club/api/recipes/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            url: currentUrl,
+            userId: user.uid
+          }),
+        })
+        if (response.ok) {
+          const data = await response.json()
+          console.log("SAVE")
+          console.log(data)
+          if (data['recipeId']) {
+            setId(data['recipeId'])
+          } else {
+            console.error('no recipe returned')
+          }
+        } else {
+          console.error('Error fetching recipes', response.status)
+        }
+      setSaved('Saved!')
+  } 
+  
   useEffect(() => {
     // Query the active tab and get its URL
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -102,6 +115,7 @@ function App() {
         })
         if (response.ok) {
           const data = await response.json()
+          console.log("FETCHED")
           console.log(data)
           if (data['recipe']) {
             setRecipe(data['recipe'])
@@ -188,6 +202,7 @@ function App() {
             </div>
           </CardContent>
           <CardFooter className='flex justify-between'>
+<<<<<<< HEAD
             <Button
               onClick={() => saveRecipe(currentUrl, user)}
               className='bg-emerald-700 text-white p-2 rounded-md w-25 self-center hover:bg-emerald-900'
@@ -199,6 +214,14 @@ function App() {
               >
                 View Details
               </a>
+=======
+            <Button 
+              disabled={saved !== 'Saved!'} 
+              onClick={() => saveRecipe(currentUrl, user)} 
+              className='bg-emerald-700 text-white p-2 rounded-md w-25 self-center hover:bg-emerald-900 disabled:opacity-50 disabled:cursor-not-allowed'
+            >
+              <a className='text-white' href={"https://leangreen.club/recipes/" + id} target='_blank'>View Details</a>
+>>>>>>> 01920da1858e526fa886ea77e506a6612b46cb52
             </Button>
             <Button
               onClick={() => saveRecipe(currentUrl, user)}
