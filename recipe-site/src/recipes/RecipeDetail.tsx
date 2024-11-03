@@ -1,9 +1,8 @@
-import { FC, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 
 import { useRecipes } from "@/hook/useRecipes";
-import { LoadingSpinner } from "@/components/custom/loading";
 import { ErrorDisplay } from "@/components/custom/error";
 import { Header } from "@/components/custom/header";
 import { Skeleton } from "components/ui/skeleton";
@@ -21,24 +20,75 @@ import {
   getSubstitutions,
   hasSubstitutions,
 } from "@/utils/substitutions.utils";
+import { useAuth } from "@/contexts/AuthContext";
+
 const RecipeDetail: FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-
-  // Get recipe data
-  const { recipe, loading, error, refreshRecipe } = useRecipes(
-    "mock-user-id",
+  const { user } = useAuth();
+  const { recipe, loading, error, setError, refreshRecipe } = useRecipes(
+    user?.uid || "",
     id
   );
+  // const [showSubstitutes, setShowSubstitutes] = useState(false);
+  // const [ingredientToSubstitute, setIngredientToSubstitute] = useState(null);
 
-  console.log(recipe);
+  // Move data processing into useMemo - always declare it, even if recipe is null
+  const ingredientData = useMemo(() => {
+    if (!recipe) return [];
+    if (recipe.carbonData == null) {
+      setError(new Error("No carbon data found"));
+      return [];
+    }
 
-  // State for substitutes and substitutes modal
-  const [showSubstitutes, setShowSubstitutes] = useState(false);
-  const [ingredientToSubstitute, setIngredientToSubstitute] = useState(null);
+    if (recipe.sanitizedIngredients == null) {
+      setError(new Error("No sanitized ingredients found"));
+      return [];
+    }
+
+    console.log(recipe);
+
+    const ingredients = recipe.ingredients;
+    const sanitizedIngredients = recipe.sanitizedIngredients;
+
+    return sanitizedIngredients.map((ingredient, index) => ({
+      name: ingredients[index],
+      sanitizedName: ingredient,
+      score: recipe.carbonData[ingredient].score,
+      substitution: null,
+      substitutionScore: -1,
+    }));
+  }, [recipe]);
+
+  const carbonScore = useMemo(() => {
+    let count = 0;
+    return Math.round(
+      (Object.values(ingredientData).reduce((acc: number, curr: any) => {
+        if (curr.score != -1) count++;
+        return acc + (curr.score == -1 ? 0 : curr.score);
+      }, 0) /
+        count) *
+        100
+    );
+  }, [recipe]);
 
   if (loading) {
-    return <LoadingSpinner />;
+    return (
+      <div className="bg-background min-h-screen">
+        <Header />
+        <div className="max-w-4xl mx-auto py-12 px-6">
+          <Card className="p-8 rounded-lg">
+            <Skeleton className="h-8 w-3/4 mb-4" />
+            <Skeleton className="aspect-video w-full mb-6" />
+            <div className="space-y-4">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-4 w-1/2" />
+            </div>
+          </Card>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
@@ -46,11 +96,15 @@ const RecipeDetail: FC = () => {
       <ErrorDisplay
         message={error.message}
         onRetry={() => refreshRecipe(id || "")}
+        redirect={{
+          path: "/recipes",
+          message: "Go to Recipes"
+        }}
       />
     );
   }
 
-  if (!recipe) {
+  if (!recipe && !loading) {
     return (
       <ErrorDisplay
         message="Recipe not found"
@@ -59,17 +113,18 @@ const RecipeDetail: FC = () => {
     );
   }
 
-  const substituteIngredient = (index: number, sub: any) => {
-    if (!recipe.sanitizedIngredients[index].original) {
-      recipe.sanitizedIngredients[index].original =
-        recipe.sanitizedIngredients[index].name;
-      recipe.sanitizedIngredients[index].originalEcoScore =
-        recipe.sanitizedIngredients[index].ecoScore;
-    }
+  if (!recipe) return null;
 
-    recipe.sanitizedIngredients[index].name = sub.name;
-    recipe.sanitizedIngredients[index].ecoScore = sub.ecoScore;
-    refreshRecipe(id || "");
+  const substituteIngredient = (index: number, sub: any) => {
+    // if (!recipe.carbonData[index].original) {
+    //   recipe.sanitizedIngredients[index].original =
+    //     recipe.sanitizedIngredients[index].name;
+    //   recipe.sanitizedIngredients[index].originalEcoScore =
+    //     recipe.sanitizedIngredients[index].ecoScore;
+    // }
+    // recipe.sanitizedIngredients[index].name = sub.name;
+    // recipe.sanitizedIngredients[index].ecoScore = sub.ecoScore;
+    // refreshRecipe(id || "");
   };
 
   return (
@@ -88,7 +143,11 @@ const RecipeDetail: FC = () => {
             {recipe.title}
           </h1>
           <div className="space-y-6">
-            <Skeleton className="aspect-video bg-gray-700/20 rounded-lg" />
+            <img
+              className="aspect-video bg-gray-700/20 rounded-lg"
+              src={recipe.image}
+              alt={recipe.title}
+            />
 
             <div className="grid grid-cols-3 gap-4 text-gray-300">
               <div>
@@ -120,19 +179,54 @@ const RecipeDetail: FC = () => {
                 Ingredients
               </h2>
               <ul className="list-disc list-inside text-gray-300">
-                {recipe.ingredients.map((ingredient: string, index: number) => (
+                {ingredientData.map((ingredient, index) => (
+                  <div key={`ingredient-${index}`}>
+                    <li
+                      className="flex items-start space-x-2 my-1"
+                    >
+                      <Checkbox className="text-green-400 me-2 my-auto" />
+                      {ingredient.name}
+                      <div className="flex-1"></div>
+                      <div className="text-gray-400">
+                        {ingredient.score != -1
+                          ? Math.round(ingredient.score * 100)
+                          : ""}
+                      </div>
+                    </li>
+                    <hr className="my-1 border-white/30 border-dashed border-t" />
+                  </div>
+                ))}
+
+                {/* TODO: Animate the eco score */}
+                <div className="flex justify-between w-full items-center">
+                  {recipe.carbonData && (
+                    <div className="flex items-center space-x-2">
+                      <span className="text-sm text-gray-400">Eco Score</span>
+                      <span className="text-green-400">
+                        ({carbonScore} / 100)
+                      </span>
+                    </div>
+                  )}
+                  {/* {recipe.rating && (
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-400">Rating</span>
+                  <span className="text-blue-400">{recipe.rating}/5</span>
+                </div>
+              )} */}
+                </div>
+
+                {/* {Object.keys(recipe.carbonData).map((sanitizedIngredient: string, index: number) => (
                   <li key={index} className="flex items-center space-x-2">
                     <Checkbox className="text-green-400 me-2" />
-                    {recipe.sanitizedIngredients[index].original ? (
+                    {recipe.carbonData[sanitizedIngredient].score != -1 ? (
                       <span className="text-gray-400">
-                        {recipe.sanitizedIngredients[index].name} (substituted
-                        for {ingredient})
+                        {"substituted Ingredient"} (substituted
+                        for {recipe.ingredients[index]})
                       </span>
                     ) : (
                       <span>{ingredient}</span>
                     )}
                     <div className="flex-1"></div>
-                    {/* TODO: Rework datastructure to include original ingredient name with score normalized ingredients */}
                     {hasSubstitutions(
                       recipe.sanitizedIngredients[index].original
                         ? recipe.sanitizedIngredients[index].original
@@ -146,7 +240,6 @@ const RecipeDetail: FC = () => {
                             className="w-14 text-lg p-0 text-gray-400 ml-auto text-right underline"
                           >
                             {recipe.sanitizedIngredients[index].ecoScore}
-                            {/* <Info className="w-4 h-4" /> */}
                           </Button>
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-md">
@@ -214,7 +307,7 @@ const RecipeDetail: FC = () => {
                       </div>
                     )}
                   </li>
-                ))}
+                ))} */}
               </ul>
             </div>
 
@@ -229,29 +322,6 @@ const RecipeDetail: FC = () => {
                   )
                 )}
               </ol>
-            </div>
-
-            {/* TODO: Animate the eco score */}
-            <div className="flex justify-between items-center">
-              {recipe.ecoScore && (
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-400">Eco Score</span>
-                  <span className="text-green-400">
-                    {Math.round(
-                      recipe.sanitizedIngredients.reduce(
-                        (acc: number, curr: any) => acc + curr.ecoScore,
-                        0
-                      ) / recipe.sanitizedIngredients.length
-                    )}
-                  </span>
-                </div>
-              )}
-              {recipe.rating && (
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-400">Rating</span>
-                  <span className="text-blue-400">{recipe.rating}/5</span>
-                </div>
-              )}
             </div>
           </div>
         </Card>
