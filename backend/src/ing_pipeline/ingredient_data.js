@@ -10,8 +10,7 @@ const SIGMOID_MIDPOINT = 10
 export default async function getCarbonScoresByRecipe(recipe) {
   const { ingredients } = recipe
 
-  //console.log('Raw ingredients')
-  //console.log(ingredients)
+  console.log(`Raw ingredients: ${JSON.stringify(ingredients)}`)
 
   const sanitized = sanitizeIngredients(ingredients)
 
