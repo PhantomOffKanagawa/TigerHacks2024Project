@@ -54,5 +54,6 @@ export interface CarbonData {
 export interface Recipe extends RecipeData {
     id: string;
     carbonData: { [key: string]: CarbonData };
-    averageCarbonScore?: number;
+    averageCarbonScore: number;
+    sanitizedIngredients: string[];
 }

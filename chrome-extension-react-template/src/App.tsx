@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import smartTruncate from 'smart-truncate'
 import './App.css'
 import GaugeComponent from './Gauge'
 import { Button } from '@/components/ui/button'
@@ -10,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Recipe} from './types/recipe'
+import { Recipe } from './types/recipe'
 import IngredientScoreBar from './components/ui/IngredientScoreBar'
 import Auth from './components/Auth.tsx'
 import { useAuth } from './contexts/AuthContext.tsx'
@@ -42,8 +43,8 @@ const sampleRecipe: Recipe = {
   ecoScore: 0,
   ratings: 0,
   carbonData: {
-    'Loading': { emissions: 0.0, score: 0 },
-    'Loading2': { emissions: 0.0, score: 0 },
+    Loading: { emissions: 0.0, score: 0 },
+    Loading2: { emissions: 0.0, score: 0 },
   },
 }
 
@@ -62,10 +63,18 @@ function App() {
     })
   }, [])
   const isUrl = validUrls.some((url) => currentUrl?.includes(url) ?? false)
+  const ecoScore = useMemo(
+    () => 100 * (recipe.averageCarbonScore ?? 0),
+    [recipe?.averageCarbonScore],
+  )
+  const truncatedDescription = useMemo(
+    () => smartTruncate(recipe.description, 120),
+    [recipe?.description],
+  )
 
   useEffect(() => {
     if (validUrls.some((url) => currentUrl?.includes(url)) && user) {
-      (async function () {
+      ;(async function () {
         console.log(currentUrl)
         console.log(user.uid)
         const response = await fetch('https://leangreen.club/api/recipes', {
@@ -90,9 +99,6 @@ function App() {
       })()
     }
   }, [currentUrl, validUrls, user])
-
-
-
 
   // if (isUrl && first) {
   //   fetch(
@@ -122,7 +128,7 @@ function App() {
 
   console.log(recipe.averageCarbonScore)
   return (
-    <Card className='w-[350px] rounded-none p-0 border-0 shadow-none bg-emerald-900'>
+    <Card className='w-[400px] rounded-none p-0 border-0 shadow-none bg-emerald-900'>
       {!isUrl ? (
         <CardContent className='pb-2'>
           <div className='text-white rounded-none text-center h-[100px] flex items-center justify-center'>
@@ -140,37 +146,39 @@ function App() {
           <CardHeader>
             <CardTitle className='text-white'>{recipe.title}</CardTitle>
             <CardDescription className='text-gray-300'>
-              {recipe.description}
+              {truncatedDescription}
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <GaugeComponent value={(recipe.averageCarbonScore ?? 0) * 100} />
-            <div className='mt-4 space-y-2'>
+            <div className='-mt-7'>
+              <GaugeComponent value={ecoScore} />
+            </div>
+            <div className='mt-1 space-y-2'>
               <div className='text-sm'>
                 <span className='font-semibold mb-2 block text-white'>
                   Ingredient Scores:
                 </span>
                 {Object.entries(recipe.carbonData)
-                  .sort(([,a], [,b]) => a.score - b.score)
-                  .filter(([,a]) => a.score !== -1) // Filter out -1 scores
+                  .sort(([, a], [, b]) => a.score - b.score)
+                  .filter(([, a]) => a.score !== -1) // Filter out -1 scores
                   .slice(0, 5) // Take top 5
                   .map(([key], index) => (
                     <IngredientScoreBar
                       key={index}
                       name={key}
-                      score={Math.round(recipe.carbonData[key].score * 10000) / 100}
+                      score={
+                        Math.round(recipe.carbonData[key].score * 10000) / 100
+                      }
                     />
                   ))}
-              </div>
-              <div className='text-sm text-white'>
-                <span className='font-semibold'>Rating:</span> {recipe.ratings}
-                /5
               </div>
             </div>
           </CardContent>
           <CardFooter className='flex justify-between'>
             <Button className='bg-emerald-700 text-white p-2 rounded-md w-25 self-center hover:bg-emerald-900'>
-              <a href={"https://leangreen.club/recipes"} target='_blank'>View Details</a>
+              <a href={'https://leangreen.club/recipes'} target='_blank'>
+                View Details
+              </a>
             </Button>
             <Button className='bg-emerald-700 text-white p-2 rounded-md w-25 self-center hover:bg-emerald-900'>
               Save Recipe
