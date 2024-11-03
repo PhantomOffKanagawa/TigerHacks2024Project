@@ -38,7 +38,7 @@ export const ExtensionBanner: FC<{ dismissable: boolean }> = ({
   } else {
     return (
       <a
-        href='https://chrome.google.com/webstore'
+        href='/leangreen-extension.zip'
         target='_blank'
         rel='noopener noreferrer'
         className='inline-block group'
