@@ -25,13 +25,13 @@ router.post('/', async function (req, res) {
     })
 
     if (!response.ok) {
+      console.log('lambda req failed', url)
       return res
         .status(response.status)
         .send({ error: 'Failed to fetch data from the external API.' })
     }
 
     const data = await response.json()
-    console.log(data)
 
     let recipeRef
     const recipeQuery = await db
@@ -61,6 +61,7 @@ router.post('/', async function (req, res) {
     res.status(201).send({
       message: 'Recipe saved successfully',
       recipeId: recipeRef.id,
+      recipe: data
     })
   } catch (error) {
     console.error('There was a problem with the fetch operation:', error)
