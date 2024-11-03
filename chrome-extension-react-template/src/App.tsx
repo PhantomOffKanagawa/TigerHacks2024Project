@@ -103,7 +103,7 @@ function App() {
 
   useEffect(() => {
     if (validUrls.some((url) => currentUrl?.includes(url)) && user) {
-      ;(async function () {
+      (async function () {
         console.log(currentUrl)
         console.log(user.uid)
         const response = await fetch('https://leangreen.club/api/recipes', {
