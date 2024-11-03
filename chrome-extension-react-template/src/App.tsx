@@ -57,9 +57,12 @@ function App() {
   const [saved, setSaved] = useState('Save Recipe')
   const [id, setId] = useState('')
 
+  const [isLoading, setIsLoading] = useState(true)
+
   async function saveRecipe(currentUrl: string, user: User) {
     console.log(currentUrl)
     console.log(user.uid)
+    setSaved('Saving...')
     const response = await fetch(
       import.meta.env.VITE_API_ENDPOINT.concat('/recipes/save'),
       {
@@ -87,12 +90,14 @@ function App() {
   }
 
   useEffect(() => {
-    // Query the active tab and get its URL
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (tabs[0]) {
-        setCurrentUrl(tabs[0].url ?? '')
-      }
-    })
+    if (!import.meta.env.DEV) {
+      // Query the active tab and get its URL
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        if (tabs[0]) {
+          setCurrentUrl(tabs[0].url ?? '')
+        }
+      })
+    }
   }, [])
   const isUrl = validUrls.some((url) => currentUrl?.includes(url) ?? false)
   const ecoScore = useMemo(
@@ -106,6 +111,7 @@ function App() {
 
   useEffect(() => {
     if (validUrls.some((url) => currentUrl?.includes(url)) && user) {
+      setIsLoading(true)
       ;(async function () {
         console.log(currentUrl)
         console.log(user.uid)
@@ -131,6 +137,7 @@ function App() {
         } else {
           console.error('Error fetching recipes', response.status)
         }
+        setIsLoading(false)
       })()
     }
   }, [currentUrl, validUrls, user])
@@ -161,12 +168,16 @@ function App() {
   //     })
   // }
 
+  // setTimeout(() => {
+  //   setIsLoading(!isLoading)
+  // }, 1000)
+
   console.log(recipe.averageCarbonScore)
   return (
-    <Card className='w-[400px] rounded-none p-0 border-0 shadow-none bg-emerald-900'>
-      {!isUrl ? (
+    <Card className='w-[400px] h-[600px] overflow-hidden relative rounded-none p-0 border-0 shadow-none bg-background'>
+      {!isUrl? (
         <CardContent className='pb-2'>
-          <div className='text-white rounded-none text-center h-[100px] flex items-center justify-center'>
+          <div className='text-white rounded-none h-[600px] text-center flex items-center justify-center'>
             <p className='text-white text-center text-lg font-semibold'>
               No Recipe Found
             </p>
@@ -176,8 +187,38 @@ function App() {
         <div>
           <Auth />
         </div>
+      ) : isLoading ? (
+        <>
+          <div className="absolute top-2 right-2 z-10">
+            <SignOutButton className="h-8 w-8 p-0" />
+          </div>
+          <CardHeader>
+            <div className='mx-auto h-6 w-3/4 bg-primary-700 animate-pulse rounded'></div>
+            <div className='h-16 w-full bg-primary-700 animate-pulse rounded mt-2'></div>
+          </CardHeader>
+          <CardContent>
+            <div className='-mt-7 flex justify-center'>
+              <div className='h-36 w-[80%] mt-4 mb-1 bg-primary-700 animate-pulse rounded-t-full'></div>
+            </div>
+            <div className='mt-1 space-y-2'>
+              <div className='text-sm'>
+                <div className='mx-auto h-5 w-32 bg-primary-700 animate-pulse rounded mb-2'></div>
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className='h-8 w-full bg-primary-700 animate-pulse rounded mb-2'></div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+          <CardFooter className='absolute bottom-0 flex justify-between w-full'>
+            <div className='w-[150px] h-10 bg-primary-700 animate-pulse rounded'></div>
+            <div className='w-[150px] h-10 bg-primary-700 animate-pulse rounded'></div>
+          </CardFooter>
+        </>
       ) : (
         <>
+          <div className="absolute top-2 right-2 z-10">
+            <SignOutButton className="h-8 w-8 p-0" />
+          </div>
           <CardHeader>
             <CardTitle className='text-white text-base'>
               {recipe.title}
@@ -209,11 +250,11 @@ function App() {
               </div>
             </div>
           </CardContent>
-          <CardFooter className='flex justify-between'>
+          <CardFooter className='absolute bottom-0 flex justify-between w-full'>
             <Button
               disabled={saved !== 'Saved!'}
               onClick={() => saveRecipe(currentUrl, user)}
-              className='bg-emerald-700 text-white p-2 rounded-md w-25 self-center hover:bg-emerald-900 disabled:opacity-50 disabled:cursor-not-allowed'
+              className='w-[150px] bg-emerald-700 text-white p-2 rounded-md self-center hover:bg-emerald-900 disabled:opacity-50 disabled:cursor-not-allowed'
             >
               <a
                 className='text-white'
@@ -224,12 +265,13 @@ function App() {
               </a>
             </Button>
             <Button
+              disabled={isLoading || saved === 'Saving...' || saved === 'Saved!'}
               onClick={() => saveRecipe(currentUrl, user)}
-              className='bg-emerald-700 text-white p-2 rounded-md w-25 self-center hover:bg-emerald-900'
+              className='w-[150px] bg-emerald-700 text-white p-2 rounded-md self-center hover:bg-emerald-900'
             >
               {saved}
             </Button>
-            <SignOutButton />
+            {/* <SignOutButton className='w-[100px]' /> */}
           </CardFooter>
         </>
       )}

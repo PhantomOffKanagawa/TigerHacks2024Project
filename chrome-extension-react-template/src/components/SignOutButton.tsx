@@ -1,8 +1,9 @@
 import React from 'react';
 import { signOutApp } from  "@/utils/firebase.utils.ts";
 import { Button } from "@/components/ui/button"
+import { LogOut } from 'lucide-react';
 
-const SignOutButton: React.FC = () => {
+const SignOutButton: React.FC<{ className?: string }> = ({ className }) => {
     const handleSignOut = async () => {
         try {
             const result = await signOutApp();
@@ -13,7 +14,9 @@ const SignOutButton: React.FC = () => {
         }
     };
 
-    return <Button onClick={handleSignOut} className="bg-emerald-700 text-white p-1.5 rounded-md w-25 self-center hover:bg-emerald-900">Sign Out</Button>;
+    return <Button onClick={handleSignOut} className={`bg-emerald-700/20 text-white/70 p-1.5 rounded-md w-10 self-center hover:bg-emerald-900/60 ${className}`}>
+        <LogOut className="h-4 w-4" />
+    </Button>;
 };
 
 export default SignOutButton;

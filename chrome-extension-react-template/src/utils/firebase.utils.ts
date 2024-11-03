@@ -53,14 +53,16 @@ export const signOutApp = async () => {
     }
 }
 
-// Listen for authentication state to change
-onAuthStateChanged(auth, async (user) => {
-    if (user) {
-        const userId = user.uid;
-        await chrome.storage.local.set({ userId });
-        console.log('User is signed in:', user);
-    } else {
-        await chrome.storage.local.remove("userId");
-        console.log('User is signed out');
-    }
-});
+if (!import.meta.env.DEV) {
+    // Listen for authentication state to change
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const userId = user.uid;
+            await chrome.storage.local.set({ userId });
+            console.log('User is signed in:', user);
+        } else {
+            await chrome.storage.local.remove("userId");
+            console.log('User is signed out');
+        }
+    });
+}

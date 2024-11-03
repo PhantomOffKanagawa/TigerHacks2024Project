@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+const colors = require('tailwindcss/colors')
+
 module.exports = {
     darkMode: ["class"],
     content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
@@ -9,33 +11,34 @@ module.exports = {
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
   		},
-  		colors: {
-  			background: 'hsl(var(--background))',
-  			foreground: 'hsl(var(--foreground))',
-  			card: {
-  				DEFAULT: 'hsl(var(--card))',
-  				foreground: 'hsl(var(--card-foreground))'
-  			},
-  			popover: {
-  				DEFAULT: 'hsl(var(--popover))',
-  				foreground: 'hsl(var(--popover-foreground))'
-  			},
-  			primary: {
-  				DEFAULT: 'hsl(var(--primary))',
-  				foreground: 'hsl(var(--primary-foreground))'
-  			},
-  			secondary: {
-  				DEFAULT: 'hsl(var(--secondary))',
-  				foreground: 'hsl(var(--secondary-foreground))'
-  			},
-  			muted: {
-  				DEFAULT: 'hsl(var(--muted))',
-  				foreground: 'hsl(var(--muted-foreground))'
-  			},
-  			accent: {
-  				DEFAULT: 'hsl(var(--accent))',
-  				foreground: 'hsl(var(--accent-foreground))'
-  			},
+		colors: {
+			background: colors.emerald[900],
+			foreground: colors.emerald[100],
+			card: {
+				DEFAULT: colors.emerald[700],
+				foreground: colors.emerald[100]
+			},
+			popover: {
+				DEFAULT: 'hsl(var(--popover))',
+				foreground: colors.emerald[100]
+			},
+			primary: colors.emerald,
+			// primary: {
+			// 	DEFAULT: colors.emerald,
+			// 	foreground: colors.emerald[100]
+			// },
+			secondary: {
+				DEFAULT: colors.emerald[300],
+				foreground: colors.emerald[100]
+			},
+			muted: {
+				DEFAULT: colors.emerald[50],
+				foreground: colors.emerald[100]
+			},
+			accent: {
+				DEFAULT: colors.emerald[400],
+				foreground: colors.emerald[100]
+			},
   			destructive: {
   				DEFAULT: 'hsl(var(--destructive))',
   				foreground: 'hsl(var(--destructive-foreground))'

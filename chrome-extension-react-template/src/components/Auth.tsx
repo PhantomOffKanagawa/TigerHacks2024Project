@@ -41,15 +41,15 @@ const Auth: React.FC = () => {
     };
 
     return (
-        <div className="bg-emerald-900 text-white shadow-lg p-4 max-w-md">
-            <h2 className="text-center p-2 mb-2 font-semibold">{isSignUp ? "Sign Up" : "Sign In"}</h2>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-1">
+        <div className="bg-emerald-900 text-white shadow-lg p-4 max-w-md h-[600px] flex flex-col items-center justify-center">
+            <h2 className="text-center p-2 mb-8 font-semibold text-xl">{isSignUp ? "Sign Up" : "Sign In"}</h2>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full items-center mb-6">
                 <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Email"
-                    className="bg-gray-700 border border-gray-300 rounded-md p-2 items-start w-2/3 self-center"
+                    className="bg-primary-700 h-[48px] border border-0 placeholder:text-emerald-100 focus:outline-none rounded-md p-3 w-2/3"
                     required
                 />
                 <input
@@ -57,25 +57,27 @@ const Auth: React.FC = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Password"
-                    className="bg-gray-700 border border-gray-300 rounded-md p-2 items-start w-2/3 self-center"
+                    className="bg-primary-700 h-[48px] border border-0 placeholder:text-emerald-100 focus:outline-none rounded-md p-3 w-2/3"
                     required
                 />
-                {isSignUp && (
+                {isSignUp ? (
                     <input
                         type="password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         placeholder="Confirm Password"
-                        className="bg-gray-700 border border-gray-300 rounded-md p-2 items-start w-2/3 self-center"
+                        className="bg-primary-700 h-[48px] border-emerald-300 placeholder:text-emerald-100 focus:outline-none rounded-md p-3 w-2/3"
                         required
                     />
+                ) : (
+                    <div className='p-3 h-[48px]'></div>
                 )}
-                <Button type="submit" disabled={loading} className="bg-emerald-700 text-white mt-2 p-2 rounded-md w-20 self-center hover:bg-emerald-800">
+                <Button type="submit" disabled={loading} className="bg-emerald-700 text-white mt-4 p-3 rounded-md hover:bg-emerald-800 w-[140px]">
                     {loading ? (isSignUp ? 'Signing Up...' : 'Signing In...') : (isSignUp ? 'Sign Up' : 'Sign In')}
                 </Button>
             </form>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            <p onClick={() => setIsSignUp(!isSignUp)} style={{ cursor: 'pointer'}} className="text-emerald-500 text-white p-2 rounded-md w-100 self-center">
+            <p style={{ color: 'red' }} className="mb-4 min-h-[50px]">{error}</p>
+            <p onClick={() => setIsSignUp(!isSignUp)} style={{ cursor: 'pointer'}} className="text-emerald-500 text-white p-2 rounded-md text-center hover:text-emerald-300">
                 {isSignUp ? "Already have an account? Log in." : "Don't have an account? Sign up."}
             </p>
         </div>
