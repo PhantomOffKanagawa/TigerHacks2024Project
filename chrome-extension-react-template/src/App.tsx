@@ -18,6 +18,7 @@ import { useAuth } from './contexts/AuthContext.tsx'
 import SignOutButton from './components/SignOutButton.tsx'
 import websiteData from './websites.json'
 import { User } from 'firebase/auth'
+import TreeComponent from './components/TreeComponent.tsx'
 
 // let first = true
 
@@ -56,6 +57,37 @@ function App() {
   const validUrls = websiteData.websites
   const [saved, setSaved] = useState('Save Recipe')
   const [id, setId] = useState('')
+  const [treeGrowth, setTreeGrowth] = useState(20) // Start at minimum size
+
+  // Calculate growth change based on recipe carbon score
+  const calculateGrowthChange = (carbonScore: number) => {
+    const baseScore = 0.5 // Threshold for positive/negative growth
+    const growthFactor = 5 // How much each score affects growth
+    return (carbonScore - baseScore) * growthFactor
+  }
+
+  // Update tree growth with limits and persistence
+  const updateTreeGrowth = (change: number) => {
+    setTreeGrowth(prev => {
+      const newGrowth = Math.min(100, Math.max(20, prev + change))
+      // Store in chrome storage
+      if (!import.meta.env.DEV) {
+        chrome.storage.sync.set({ treeGrowth: newGrowth })
+      }
+      return newGrowth
+    })
+  }
+
+  // Load initial tree growth from storage
+  useEffect(() => {
+    if (!import.meta.env.DEV) {
+      chrome.storage.sync.get(['treeGrowth'], (result) => {
+        if (result.treeGrowth) {
+          setTreeGrowth(result.treeGrowth)
+        }
+      })
+    }
+  }, [])
 
   const [isLoading, setIsLoading] = useState(true)
 
@@ -80,6 +112,10 @@ function App() {
       console.log(data)
       if (data['recipeId']) {
         setId(data['recipeId'])
+
+        // Update tree growth based on recipe's carbon score
+        const growthChange = calculateGrowthChange(recipe.averageCarbonScore ?? 0)
+        updateTreeGrowth(growthChange)
       } else {
         console.error('no recipe returned')
       }
@@ -142,6 +178,13 @@ function App() {
     }
   }, [currentUrl, validUrls, user])
 
+  // For testing growth developments
+  // setTimeout(() => {
+  //   const growthChange = calculateGrowthChange(0.55 ?? 0)
+  //   updateTreeGrowth(growthChange)
+  //   // setTreeGrowth(20)
+  // }, 1000)
+
   console.log(recipe.averageCarbonScore)
   return (
     <Card className='w-[400px] h-[600px] overflow-hidden relative rounded-none p-0 border-0 shadow-none bg-background'>
@@ -155,10 +198,12 @@ function App() {
             <SignOutButton className="h-8 w-8 p-0" />
           </div>
           <CardContent className='pb-2'>
-            <div className='text-white rounded-none h-[600px] text-center flex items-center justify-center'>
-              <p className='text-white text-center text-lg font-semibold'>
+            <div className='text-white rounded-none h-[600px] text-center flex items-center flex-col justify-center'>
+            <p className='text-white text-center text-lg font-semibold' style={{marginTop: '25px'}}>
                 No Recipe Found
               </p>
+              <div className="flex-1"></div>
+              <TreeComponent growth={treeGrowth} />
             </div>
           </CardContent>
         </>
