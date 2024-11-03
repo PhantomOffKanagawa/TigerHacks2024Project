@@ -318,23 +318,28 @@ const mockRecipes: Recipe[] = [{
 
 export const RecipeService = {
     // Get all recipes for a user
-    getUserRecipes: async (userId: string): Promise < Recipe[] > => {
-        return mockRecipes;
-        // try {
-        //     const recipesRef = collection(db, 'recipes');
-        //     const q = query(recipesRef, where('userId', '==', userId));
-        //     const querySnapshot = await getDocs(q);
-
-        //     // TODO: Worried about typing here
-        //     return querySnapshot.docs.map((doc) => ({
-        //         // TODO: Figure out if we need to store the id
-        //         // id: doc.id,
-        //         ...doc.data()
-        //       })) as Recipe[];
-        // } catch (error) {
-        //     console.error('Error fetching recipes:', error);
-        //     throw new Error('Failed to fetch recipes');
-        // }
+    getUserRecipes: async (userId: string): Promise < any > => {
+        try {
+        fetch("https://leangreen.club/api/recipe/user/" + userId, {
+            method: 'GET',
+        })
+          .then(res => {
+            if (!res.ok) {
+              throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            return res.json();
+          })
+          .then(data => {
+            console.log(data);
+            return data;
+          })
+          .catch(error => {
+            console.error('Error fetching recipe:', error);
+          });
+        } catch (error) {
+            console.error('Error fetching recipe:', error);
+            throw new Error('Failed to fetch recipe');
+        }
     },
 
     // Get a single recipe by ID

@@ -8,10 +8,13 @@ import { LoadingSpinner } from "@/components/custom/loading";
 import { ErrorDisplay } from "@/components/custom/error";
 import { Header } from "@/components/custom/header";
 import { ExtensionBanner } from "components/custom/ExtensionBanner";
+import { useAuth } from "@/contexts/AuthContext";
 
 const RecipeList: FC = () => {
-  const { recipes, loading, error, refreshRecipes } =
-    useRecipes("example_user");
+  const { user } = useAuth();
+  const { recipes, loading, error, refreshRecipes } = useRecipes(
+    user?.uid || ""
+  );
 
   if (loading) {
     return <LoadingSpinner />;
@@ -23,7 +26,7 @@ const RecipeList: FC = () => {
 
   return (
     <div className="h-full w-full bg-background">
-      <ExtensionBanner />
+      <ExtensionBanner dismissable={true} />
       <Header />
       <div className="max-w-7xl mx-auto py-12 px-6">
         <h1 className="w-min text-4xl font-bold text-white mb-12 mx-auto">
