@@ -21,9 +21,6 @@ import { User } from 'firebase/auth'
 
 // let first = true
 
-
-
-
 const sampleRecipe: Recipe = {
   id: 0,
   title: 'Loading...',
@@ -52,8 +49,6 @@ const sampleRecipe: Recipe = {
   },
 }
 
-
-
 function App() {
   const [currentUrl, setCurrentUrl] = useState('')
   const [recipe, setRecipe] = useState(sampleRecipe)
@@ -62,7 +57,7 @@ function App() {
   const [saved, setSaved] = useState('Save Recipe');
   const [id, setId] = useState('');
 
-  async function saveRecipe(currentUrl: string, user: User){
+  async function saveRecipe(currentUrl: string, user: User) {
     console.log(currentUrl)
         console.log(user.uid)
         const response = await fetch(import.meta.env.VITE_API_ENDPOINT.concat('/recipes/save'), {
@@ -185,7 +180,7 @@ function App() {
           </CardHeader>
           <CardContent>
             <div className='-mt-7'>
-              <GaugeComponent value={ecoScore} />
+              <GaugeComponent value={Math.round(ecoScore)} />
             </div>
             <div className='mt-1 space-y-2'>
               <div className='text-sm'>
@@ -199,24 +194,31 @@ function App() {
                   .map(([key], index) => (
                     <IngredientScoreBar
                       key={index}
-                      name={key}
-                      score={
-                        Math.round(recipe.carbonData[key].score * 10000) / 100
-                      }
+                      name={smartTruncate(key, 35)}
+                      score={Math.round(recipe.carbonData[key].score * 100)}
                     />
                   ))}
               </div>
             </div>
           </CardContent>
           <CardFooter className='flex justify-between'>
-            <Button 
-              disabled={saved !== 'Saved!'} 
-              onClick={() => saveRecipe(currentUrl, user)} 
+            <Button
+              disabled={saved !== 'Saved!'}
+              onClick={() => saveRecipe(currentUrl, user)}
               className='bg-emerald-700 text-white p-2 rounded-md w-25 self-center hover:bg-emerald-900 disabled:opacity-50 disabled:cursor-not-allowed'
             >
-              <a className='text-white' href={"https://leangreen.club/recipes/" + id} target='_blank'>View Details</a>
+              <a
+                className='text-white'
+                href={'https://leangreen.club/recipes/' + id}
+                target='_blank'
+              >
+                View Details
+              </a>
             </Button>
-            <Button onClick={() => saveRecipe(currentUrl, user)} className='bg-emerald-700 text-white p-2 rounded-md w-25 self-center hover:bg-emerald-900'>
+            <Button
+              onClick={() => saveRecipe(currentUrl, user)}
+              className='bg-emerald-700 text-white p-2 rounded-md w-25 self-center hover:bg-emerald-900'
+            >
               {saved}
             </Button>
             <SignOutButton />
