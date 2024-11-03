@@ -67,7 +67,7 @@ function App() {
       ;(async function () {
         console.log(currentUrl)
         console.log(user.uid)
-        const response = await fetch('http://localhost:3000/api/recipes', {
+        const response = await fetch('https://leangreen.club/api/recipes', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
