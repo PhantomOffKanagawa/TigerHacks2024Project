@@ -33,6 +33,51 @@ const RecipeDetail: FC = () => {
   // const [showSubstitutes, setShowSubstitutes] = useState(false);
   // const [ingredientToSubstitute, setIngredientToSubstitute] = useState(null);
 
+  const ecoClasses = (score: number) => {
+    if (score >= 70) return (
+      <div className="w-full flex items-center space-x-2 p-3 rounded-lg shadow-lg bg-green-900 border border-green-800/30 sticky top-2 bottom-2 z-10">
+      <span className="text-sm text-gray-300 font-medium">Eco Score</span>
+      <div className="flex items-center gap-1">
+        <span className="text-2xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
+          {score}
+        </span>
+        <span className="text-gray-400 font-medium">/100</span>
+      </div>
+      <div className="ml-2">
+        <div className="w-3 h-3 rounded-full bg-green-400 animate-pulse animate-pulse-slow" />
+      </div>
+    </div>
+    );
+    if (score >= 30) return (
+      <div className="w-full flex items-center space-x-2 p-3 rounded-lg shadow-lg bg-yellow-900 border border-yellow-800/30 sticky top-2 bottom-2 z-10">
+      <span className="text-sm text-gray-300 font-medium">Eco Score</span>
+      <div className="flex items-center gap-1">
+        <span className="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-amber-400 bg-clip-text text-transparent">
+          {score}
+        </span>
+        <span className="text-gray-400 font-medium">/100</span>
+      </div>
+      <div className="ml-2">
+        <div className="w-3 h-3 rounded-full bg-yellow-400 animate-pulse animate-pulse-fast" />
+      </div>
+    </div>
+    );
+    return (
+        <div className="w-full flex items-center space-x-2 p-3 rounded-lg shadow-lg bg-red-900 border border-red-800/30 sticky top-2 bottom-2 z-10">
+        <span className="text-sm text-gray-300 font-medium">Eco Score</span>
+        <div className="flex items-center gap-1">
+          <span className="text-2xl font-bold bg-gradient-to-r from-red-400 to-rose-400 bg-clip-text text-transparent">
+            {score}
+          </span>
+          <span className="text-gray-400 font-medium">/100</span>
+        </div>
+        <div className="ml-2">
+          <div className="w-3 h-3 rounded-full bg-red-400 animate-pulse animate-pulse-faster" />
+        </div>
+      </div>
+      );
+  };
+
   // Move data processing into useMemo - always declare it, even if recipe is null
   const ingredientData = useMemo(() => {
     if (!recipe) return [];
@@ -149,19 +194,25 @@ const RecipeDetail: FC = () => {
               alt={recipe.title}
             />
 
-            <div className="grid grid-cols-3 gap-4 text-gray-300">
-              <div>
-                <h3 className="font-semibold text-center">Prep Time</h3>
-                <p className="text-center">{recipe.prep_time} mins</p>
-              </div>
-              <div>
-                <h3 className="font-semibold text-center">Cook Time</h3>
-                <p className="text-center">{recipe.cook_time} mins</p>
-              </div>
-              <div>
-                <h3 className="font-semibold text-center">Total Time</h3>
-                <p className="text-center">{recipe.total_time} mins</p>
-              </div>
+            <div className="grid auto-cols-fr grid-flow-col gap-4 text-gray-300">
+              {recipe.prep_time && (
+                <div>
+                  <h3 className="font-semibold text-center">Prep Time</h3>
+                  <p className="text-center">{recipe.prep_time} mins</p>
+                </div>
+              )}
+              {recipe.cook_time && (
+                <div>
+                  <h3 className="font-semibold text-center">Cook Time</h3>
+                  <p className="text-center">{recipe.cook_time} mins</p>
+                </div>
+              )}
+              {recipe.total_time && (
+                <div>
+                  <h3 className="font-semibold text-center">Total Time</h3>
+                  <p className="text-center">{recipe.total_time} mins</p>
+                </div>
+              )}
             </div>
 
             <hr className="my-6" />
@@ -173,6 +224,10 @@ const RecipeDetail: FC = () => {
             </div>
 
             <p className="text-gray-300">{recipe.description}</p>
+
+            {recipe.carbonData && (
+              ecoClasses(20)
+            )}
 
             <div>
               <h2 className="text-2xl font-semibold text-white mb-3">
@@ -199,14 +254,7 @@ const RecipeDetail: FC = () => {
 
                 {/* TODO: Animate the eco score */}
                 <div className="flex justify-between w-full items-center">
-                  {recipe.carbonData && (
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm text-gray-400">Eco Score</span>
-                      <span className="text-green-400">
-                        ({carbonScore} / 100)
-                      </span>
-                    </div>
-                  )}
+
                   {/* {recipe.rating && (
                 <div className="flex items-center space-x-2">
                   <span className="text-sm text-gray-400">Rating</span>
