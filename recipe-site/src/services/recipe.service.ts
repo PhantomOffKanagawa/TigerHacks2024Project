@@ -320,7 +320,7 @@ export const RecipeService = {
     // Get all recipes for a user
     getUserRecipes: async (userId: string): Promise < any > => {
         try {
-        fetch("https://leangreen.club/api/recipe/user/" + userId, {
+        fetch(import.meta.env.VITE_API_ENDPOINT.concat("/recipe/user/") + userId, {
             method: 'GET',
         })
           .then(res => {
