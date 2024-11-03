@@ -184,9 +184,23 @@ const RecipeDetail: FC = () => {
         </button>
 
         <Card className="p-8 rounded-lg">
-          <h1 className="text-4xl font-bold text-white mb-4 font-display">
-            {recipe.title}
-          </h1>
+          <a href={recipe.canonical_url} target="_blank" rel="noopener noreferrer">
+            <div className="flex flex-col">
+              <h1 className="text-4xl font-bold text-white mb-2 font-display hover:text-gray-300 transition-colors flex items-start">
+                {recipe.title}
+                  <span className="ml-4 mt-[-2px] text-gray-500 text-sm">
+                    <svg className="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                </span>
+              </h1>
+              {recipe.canonical_url && (
+                <span className="text-sm text-gray-400 mb-4">
+                from {new URL(recipe.canonical_url).hostname.replace('www.', '')}
+              </span>
+              )}
+            </div>
+          </a>
           <div className="space-y-6">
             <img
               className="aspect-video bg-gray-700/20 rounded-lg"
@@ -226,7 +240,7 @@ const RecipeDetail: FC = () => {
             <p className="text-gray-300">{recipe.description}</p>
 
             {recipe.carbonData && (
-              ecoClasses(20)
+              ecoClasses(carbonScore)
             )}
 
             <div>
