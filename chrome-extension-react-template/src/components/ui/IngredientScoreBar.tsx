@@ -17,7 +17,7 @@ const IngredientScoreBar: React.FC<IngredientScoreBarProps> = ({ name, score }) 
           className="bg-green-600 h-2.5 rounded-full transition-all duration-300"
           style={{ 
             width: `${score}%`,
-            backgroundColor: score > 66 ? '#ef4444' : score > 33 ? '#eab308' : '#22c55e'
+            backgroundColor: score > 66 ? '#22c55e' : score > 33 ? '#eab308' :'#ef4444' 
           }}
         />
       </div>
