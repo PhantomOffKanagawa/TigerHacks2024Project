@@ -18,6 +18,7 @@ function simplifyIngredient(ingredient) {
     .replace(/\bof\b\s*/g, '')
     .replace(/\d+/g, '')
     .trim()
+  cleaned = inputString.replace(/(\w+),.*/, '$1');
 
   // Remove any remaining numbers and extra spaces
   cleaned = cleaned.replace(/\d+/g, '').trim()
