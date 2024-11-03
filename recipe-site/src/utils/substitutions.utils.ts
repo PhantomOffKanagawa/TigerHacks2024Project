@@ -7,6 +7,7 @@ import { substitutions } from "@/data/substitutions";
 import { co2Data } from "@/data/co2_data";
   
   export function getSubstitutions(ingredientName: string, currentSubstitution?: string): FoodItem[] {
+
     // Normalize the ingredient name for lookup
     const normalizedName = ingredientName.trim().toLowerCase();
     

@@ -56,17 +56,29 @@ const RecipeDetail: FC = () => {
     if (ingredient.score == -1) return null;
 
     if (!hasSubstitutions(ingredient.match)) return (
-      <div className="text-gray-300 text-lg">
-        {Math.round(ingredient.score * 100)}
-      </div>
+      <>
+        <div className="text-gray-300 text-lg">
+          {Math.round(ingredient.score * 100)}
+        </div>
+        <Button variant="ghost" onClick={() => substituteIngredient(index, { name: "", score: -2 })}
+          className="text-gray-200 text-lg p-0 h-[28px] w-[30px]" style={{marginRight: "-5px", marginBottom: "-1px"}}>
+          X
+        </Button>
+      </>
     );
 
     console.log("matched");
 
     return (
-      <Button variant="ghost" className="text-gray-200 underline text-lg p-0 h-[28px] w-[30px]" style={{marginRight: "-5px", marginBottom: "-1px"}} onClick={() => openSubstitutions(ingredient, index)}>
-        {Math.round(ingredient.substitutionScore != -1 ? ingredient.substitutionScore * 100 : ingredient.score * 100)}
-      </Button>
+      <>
+        <Button variant="ghost" className="text-gray-200 underline text-lg p-0 h-[28px] w-[30px]" style={{marginRight: "-5px", marginBottom: "-1px"}} onClick={() => openSubstitutions(ingredient, index)}>
+          {Math.round(ingredient.substitutionScore > 0 ? ingredient.substitutionScore * 100 : ingredient.score * 100)}
+        </Button>
+        <Button variant="ghost" onClick={() => substituteIngredient(index, { name: "", score: -2 })}
+          className="text-gray-200 text-lg p-0 h-[28px] w-[30px]" style={{marginRight: "-5px", marginBottom: "-1px"}}>
+          X
+        </Button>
+      </>
     );
   };
 
@@ -161,8 +173,10 @@ const RecipeDetail: FC = () => {
     let count = 0;
     return Math.round(
       (Object.values(ingredientData).reduce((acc: number, curr: any) => {
-        if ((curr.substitution != null && curr.substitutionScore != -1) || curr.score != -1) count++;
-        return acc + (curr.substitution != null && curr.substitutionScore != -1 ? curr.substitutionScore : curr.score == -1 ? 0 : curr.score);
+        // Updated to ignore ingredients with substitutionScore of -2
+        if (curr.substitution == "") return acc;
+        if ((curr.substitution != null && curr.substitutionScore > -1) || curr.score != -1) count++;
+        return acc + (curr.substitution != null && curr.substitutionScore > -1 ? curr.substitutionScore : curr.score == -1 ? 0 : curr.score);
       }, 0) /
         count) *
         100
@@ -210,7 +224,7 @@ const RecipeDetail: FC = () => {
   const substituteIngredient = (index: number, sub: any) => {
     setShowSubstitutes(false);
     const newSubstitutions = substitutions ? [...substitutions] : Array(ingredientData.length).fill(null);
-    if (sub.name == ingredientData[index].match) {
+    if (sub.name == ingredientData[index].match || sub.name == "" && ingredientData[index].substitution == "") {
       newSubstitutions[index] = null;
       ingredientData[index].substitution = null;
       ingredientData[index].substitutionScore = -1;
@@ -220,16 +234,6 @@ const RecipeDetail: FC = () => {
       ingredientData[index].substitutionScore = sub.score;
     }
     setRecipeSubstitutions(id || "", newSubstitutions as any);
-
-    // if (!recipe.carbonData[index].original) {
-    //   recipe.sanitizedIngredients[index].original =
-    //     recipe.sanitizedIngredients[index].name;
-    //   recipe.sanitizedIngredients[index].originalEcoScore =
-    //     recipe.sanitizedIngredients[index].ecoScore;
-    // }
-    // recipe.sanitizedIngredients[index].name = sub.name;
-    // recipe.sanitizedIngredients[index].ecoScore = sub.ecoScore;
-    // refreshRecipe(id || "");
   };
 
   return (
@@ -400,7 +404,14 @@ const RecipeDetail: FC = () => {
                   <div key={`ingredient-${index}`}>
                     <li className="flex items-start space-x-2 my-1">
                       <Checkbox className="text-green-400 me-2 my-auto" />
-                      <span className="self-center">{ingredient.substitution ? `${ingredient.substitution} (substituted for ${ingredient.name})` : ingredient.name}</span>
+                      <span className="self-center">
+                        {ingredient.substitution === "" ? 
+                          <span className="line-through text-gray-500">{ingredient.name}</span> :
+                          ingredient.substitution ? 
+                            `${ingredient.substitution} (substituted for ${ingredient.name})` : 
+                            ingredient.name
+                        }
+                      </span>
                       <div className="flex-1"></div>
                       {returnSubstitutionButton(index)}
                     </li>
