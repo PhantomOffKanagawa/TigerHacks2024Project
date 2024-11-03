@@ -88,12 +88,13 @@ function sanitizeIngredient(inge) {
   const result = fuse.search(ing)
   if (!result.length) {
     console.log(ing + ' has no results')
-    return null
+    return ing
   }
   //console.log(`Found ${result[0].item} through fuzzy search`)
+  // console.log(result)
   return result[0].item
 }
 
 export default function sanitizeIngredients(ings) {
-  return ings.map(sanitizeIngredient)
+  return ings.map(sanitizeIngredient);
 }
