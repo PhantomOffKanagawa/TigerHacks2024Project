@@ -50,7 +50,7 @@ const RecipeDetail: FC = () => {
     if (ingredient.score == -1) return null;
 
     if (!hasSubstitutions(ingredient.match)) return (
-      <div className="text-gray-400 text-lg">
+      <div className="text-gray-300 text-lg">
         {Math.round(ingredient.score * 100)}
       </div>
     );
@@ -58,8 +58,8 @@ const RecipeDetail: FC = () => {
     console.log("matched");
 
     return (
-      <Button variant="ghost" className="text-gray-400 underline text-lg p-0 h-[28px]" onClick={() => openSubstitutions(ingredient, index)}>
-        {Math.round(ingredient.score * 100)}
+      <Button variant="ghost" className="text-gray-200 underline text-lg p-0 h-[28px] w-[30px]" style={{marginRight: "-5px", marginBottom: "-1px"}} onClick={() => openSubstitutions(ingredient, index)}>
+        {Math.round(ingredient.substitutionScore != -1 ? ingredient.substitutionScore * 100 : ingredient.score * 100)}
       </Button>
     );
   };
@@ -72,50 +72,44 @@ const RecipeDetail: FC = () => {
   }
 
   const ecoClasses = (score: number) => {
-    if (score >= 70)
-      return (
-        <div className="w-full flex justify-between items-center space-x-2 p-3 rounded-lg shadow-lg bg-green-900 border border-green-800/30 sticky top-2 bottom-2 z-10">
-          <span className="text-sm text-gray-300 font-medium">Carbon Footprint Score:</span>
-          <div className="flex-1"></div>
-          <div className="flex items-center gap-1">
-            <span className="text-2xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
-              {score}
-            </span>
-            <span className="text-gray-400 font-medium">/100</span>
-          </div>
-          <div className="ml-2">
-            <div className="w-3 h-3 rounded-full bg-green-400 animate-pulse animate-pulse-slow" />
-          </div>
-        </div>
-      );
-    if (score >= 30)
-      return (
-        <div className="w-full flex justify-between items-center space-x-2 p-3 rounded-lg shadow-lg bg-yellow-900 border border-yellow-800/30 sticky top-2 bottom-2 z-10">
-          <span className="text-sm text-gray-300 font-medium">Carbon Footprint Score:</span>
-          <div className="flex-1"></div>
-          <div className="flex items-center gap-1">
-            <span className="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-amber-400 bg-clip-text text-transparent">
-              {score}
-            </span>
-            <span className="text-gray-400 font-medium">/100</span>
-          </div>
-          <div className="ml-2">
-            <div className="w-3 h-3 rounded-full bg-yellow-400 animate-pulse animate-pulse-fast" />
-          </div>
-        </div>
-      );
+    const colors = {
+      high: {
+        bg: "bg-green-900",
+        border: "border-green-800/30", 
+        text: "from-green-400 to-emerald-400",
+        dot: "bg-green-400",
+        speed: "animate-pulse-slow"
+      },
+      mid: {
+        bg: "bg-yellow-900",
+        border: "border-yellow-800/30",
+        text: "from-yellow-400 to-amber-400", 
+        dot: "bg-yellow-400",
+        speed: "animate-pulse-fast"
+      },
+      low: {
+        bg: "bg-red-900", 
+        border: "border-red-800/30",
+        text: "from-red-400 to-rose-400",
+        dot: "bg-red-400",
+        speed: "animate-pulse-faster"
+      }
+    };
+
+    const theme = score >= 70 ? colors.high : score >= 30 ? colors.mid : colors.low;
+
     return (
-      <div className="w-full flex justify-between items-center space-x-2 p-3 rounded-lg shadow-lg bg-red-900 border border-red-800/30 sticky top-2 bottom-2 z-10">
+      <div className={`w-full flex justify-between items-center space-x-2 p-3 rounded-lg shadow-lg ${theme.bg} border ${theme.border} sticky top-2 bottom-2 z-10 transition-colors duration-500`}>
         <span className="text-sm text-gray-300 font-medium">Carbon Footprint Score:</span>
-          <div className="flex-1"></div>
-          <div className="flex items-center gap-1">
-          <span className="text-2xl font-bold bg-gradient-to-r from-red-400 to-rose-400 bg-clip-text text-transparent">
+        <div className="flex-1"></div>
+        <div className="flex items-center gap-1">
+          <span className={`text-2xl font-bold bg-gradient-to-r ${theme.text} bg-clip-text text-transparent transition-all duration-500`}>
             {score}
           </span>
           <span className="text-gray-400 font-medium">/100</span>
         </div>
         <div className="ml-2">
-          <div className="w-3 h-3 rounded-full bg-red-400 animate-pulse animate-pulse-faster" />
+          <div className={`w-3 h-3 rounded-full ${theme.dot} ${theme.speed} transition-colors duration-500`} />
         </div>
       </div>
     );
@@ -293,7 +287,7 @@ const RecipeDetail: FC = () => {
       <div className="max-w-4xl mx-auto py-12 px-6">
         <button
           onClick={() => navigate("/recipes")}
-          className="mb-6 text-gray-400 hover:text-white transition-colors"
+          className="mb-6 text-gray-200 hover:text-white transition-colors"
         >
           ← Back to Recipes
         </button>
@@ -362,7 +356,7 @@ const RecipeDetail: FC = () => {
 
             <hr className="my-6" />
 
-            <div className="flex items-center space-x-4 text-gray-400">
+            <div className="flex items-center space-x-4 text-gray-300">
               <span>By {recipe.author}</span>
               <span>•</span>
               <span>{recipe.cuisine} Cuisine</span>
@@ -388,110 +382,6 @@ const RecipeDetail: FC = () => {
                     <hr className="my-1 border-white/30 border-dashed border-t" />
                   </div>
                 ))}
-
-                {/* TODO: Animate the eco score */}
-                <div className="flex justify-between w-full items-center">
-                  {/* {recipe.rating && (
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-400">Rating</span>
-                  <span className="text-blue-400">{recipe.rating}/5</span>
-                </div>
-              )} */}
-                </div>
-
-                {/* {Object.keys(recipe.carbonData).map((sanitizedIngredient: string, index: number) => (
-                  <li key={index} className="flex items-center space-x-2">
-                    <Checkbox className="text-green-400 me-2" />
-                    {recipe.carbonData[sanitizedIngredient].score != -1 ? (
-                      <span className="text-gray-400">
-                        {"substituted Ingredient"} (substituted
-                        for {recipe.ingredients[index]})
-                      </span>
-                    ) : (
-                      <span>{ingredient}</span>
-                    )}
-                    <div className="flex-1"></div>
-                    {hasSubstitutions(
-                      recipe.sanitizedIngredients[index].original
-                        ? recipe.sanitizedIngredients[index].original
-                        : recipe.sanitizedIngredients[index].name
-                    ) ? (
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="w-14 text-lg p-0 text-gray-400 ml-auto text-right underline"
-                          >
-                            {recipe.sanitizedIngredients[index].ecoScore}
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-md">
-                          <DialogHeader>
-                            <DialogTitle>
-                              Substitute{" "}
-                              {recipe.sanitizedIngredients[index].name}
-                            </DialogTitle>
-                            <DialogDescription>
-                              Choose a more eco-friendly alternative
-                            </DialogDescription>
-                          </DialogHeader>
-                          <div className="space-y-4">
-                            {recipe.sanitizedIngredients[index].name && (
-                              <div className="space-y-4">
-                                {getSubstitutions(
-                                  recipe.sanitizedIngredients[index].original
-                                    ? recipe.sanitizedIngredients[index]
-                                        .original
-                                    : recipe.sanitizedIngredients[index].name,
-                                  recipe.sanitizedIngredients[index].original
-                                    ? recipe.sanitizedIngredients[index].name
-                                    : undefined
-                                ).map((sub) => (
-                                  <div
-                                    key={sub.name}
-                                    className="flex items-center justify-between p-2 hover:bg-gray-700/10 rounded"
-                                  >
-                                    <span>{sub.name}</span>
-                                    <div className="flex items-center gap-2">
-                                      <span
-                                        className={`${sub.ecoScore > recipe.sanitizedIngredients[index].ecoScore ? "text-green-500" : "text-red-500"}`}
-                                      >
-                                        {sub.ecoScore >
-                                        recipe.sanitizedIngredients[index]
-                                          .ecoScore
-                                          ? "↑"
-                                          : "↓"}
-                                        {Math.abs(
-                                          sub.ecoScore -
-                                            recipe.sanitizedIngredients[index]
-                                              .ecoScore
-                                        )}
-                                      </span>
-                                      <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() =>
-                                          substituteIngredient(index, sub)
-                                        }
-                                      >
-                                        Use This
-                                      </Button>
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    ) : (
-                      <div className="w-14 text-lg p-0 ml-auto text-center">
-                        {recipe.sanitizedIngredients[index].ecoScore}
-                      </div>
-                    )}
-                  </li>
-                ))} */}
               </ul>
             </div>
 
