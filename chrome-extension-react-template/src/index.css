@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  width: 400px;
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -17,17 +21,17 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-*{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "JetBrains Mono", monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-optical-sizing: auto;
   font-weight: normal;
   font-style: normal;
- }
+}
 
-#root{
+#root {
   padding: 0px;
 }
 
@@ -71,7 +75,6 @@ button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
-
 
 @media (prefers-color-scheme: light) {
   :root {
@@ -117,7 +120,7 @@ button:focus-visible {
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
-    --card: 164.2 85.7% 16.5%; 
+    --card: 164.2 85.7% 16.5%;
     --card-foreground: 0 0% 98%;
     --popover: 0 0% 3.9%;
     --popover-foreground: 0 0% 98%;

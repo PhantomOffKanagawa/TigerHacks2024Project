@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Recipe} from './types/recipe'
+import { Recipe } from './types/recipe'
 import IngredientScoreBar from './components/ui/IngredientScoreBar'
 import Auth from './components/Auth.tsx'
 import { useAuth } from './contexts/AuthContext.tsx'
@@ -42,8 +42,8 @@ const sampleRecipe: Recipe = {
   ecoScore: 0,
   ratings: 0,
   carbonData: {
-    'Loading': { emissions: 0.0, score: 0 },
-    'Loading2': { emissions: 0.0, score: 0 },
+    Loading: { emissions: 0.0, score: 0 },
+    Loading2: { emissions: 0.0, score: 0 },
   },
 }
 
@@ -65,7 +65,7 @@ function App() {
 
   useEffect(() => {
     if (validUrls.some((url) => currentUrl?.includes(url)) && user) {
-      (async function () {
+      ;(async function () {
         console.log(currentUrl)
         console.log(user.uid)
         const response = await fetch('https://leangreen.club/api/recipes', {
@@ -90,9 +90,6 @@ function App() {
       })()
     }
   }, [currentUrl, validUrls, user])
-
-
-
 
   // if (isUrl && first) {
   //   fetch(
@@ -122,7 +119,7 @@ function App() {
 
   console.log(recipe.averageCarbonScore)
   return (
-    <Card className='w-[350px] rounded-none p-0 border-0 shadow-none bg-emerald-900'>
+    <Card className='w-[400px] rounded-none p-0 border-0 shadow-none bg-emerald-900'>
       {!isUrl ? (
         <CardContent className='pb-2'>
           <div className='text-white rounded-none text-center h-[100px] flex items-center justify-center'>
@@ -151,14 +148,16 @@ function App() {
                   Ingredient Scores:
                 </span>
                 {Object.entries(recipe.carbonData)
-                  .sort(([,a], [,b]) => a.score - b.score)
-                  .filter(([,a]) => a.score !== -1) // Filter out -1 scores
+                  .sort(([, a], [, b]) => a.score - b.score)
+                  .filter(([, a]) => a.score !== -1) // Filter out -1 scores
                   .slice(0, 5) // Take top 5
                   .map(([key], index) => (
                     <IngredientScoreBar
                       key={index}
                       name={key}
-                      score={Math.round(recipe.carbonData[key].score * 10000) / 100}
+                      score={
+                        Math.round(recipe.carbonData[key].score * 10000) / 100
+                      }
                     />
                   ))}
               </div>
@@ -170,7 +169,9 @@ function App() {
           </CardContent>
           <CardFooter className='flex justify-between'>
             <Button className='bg-emerald-700 text-white p-2 rounded-md w-25 self-center hover:bg-emerald-900'>
-              <a href={"https://leangreen.club/recipes"} target='_blank'>View Details</a>
+              <a href={'https://leangreen.club/recipes'} target='_blank'>
+                View Details
+              </a>
             </Button>
             <Button className='bg-emerald-700 text-white p-2 rounded-md w-25 self-center hover:bg-emerald-900'>
               Save Recipe
