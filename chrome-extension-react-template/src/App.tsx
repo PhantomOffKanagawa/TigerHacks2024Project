@@ -145,18 +145,23 @@ function App() {
   console.log(recipe.averageCarbonScore)
   return (
     <Card className='w-[400px] h-[600px] overflow-hidden relative rounded-none p-0 border-0 shadow-none bg-background'>
-      {!isUrl? (
-        <CardContent className='pb-2'>
-          <div className='text-white rounded-none h-[600px] text-center flex items-center justify-center'>
-            <p className='text-white text-center text-lg font-semibold'>
-              No Recipe Found
-            </p>
-          </div>
-        </CardContent>
-      ) : !user ? (
+      {!user ? (
         <div>
           <Auth />
         </div>
+      ) : !isUrl ? (
+        <>
+          <div className="absolute top-2 right-2 z-10">
+            <SignOutButton className="h-8 w-8 p-0" />
+          </div>
+          <CardContent className='pb-2'>
+            <div className='text-white rounded-none h-[600px] text-center flex items-center justify-center'>
+              <p className='text-white text-center text-lg font-semibold'>
+                No Recipe Found
+              </p>
+            </div>
+          </CardContent>
+        </>
       ) : isLoading ? (
         <>
           <div className="absolute top-2 right-2 z-10">
@@ -241,7 +246,6 @@ function App() {
             >
               {saved}
             </Button>
-            {/* <SignOutButton className='w-[100px]' /> */}
           </CardFooter>
         </>
       )}
