@@ -39,7 +39,7 @@ router.post('/', async function (req, res) {
       const [carbonData, avg] = await getCarbonScoresByRecipe(data)
       data['carbonData'] = carbonData
       data['averageCarbonScore'] = avg
-      data['sanitizedIngredients'] = sanitizeIngredients(data.ingredients)
+      data['sanitizedIngredients'] = sanitizeIngredients(data.ingredients).map(i => i[0])
 
 
     res.status(201).send({
@@ -95,7 +95,7 @@ router.post('/save', async function (req, res) {
       const [carbonData, avg] = await getCarbonScoresByRecipe(data)
       data['carbonData'] = carbonData
       data['averageCarbonScore'] = avg
-      data['sanitizedIngredients'] = sanitizeIngredients(data.ingredients)
+      data['sanitizedIngredients'] = sanitizeIngredients(data.ingredients).map(i => i[0])
       if (Object.keys(carbonData).length === 0 || avg === 0) {
         return res.status(400).send({ error: 'Failed to get carbon data'})
       }

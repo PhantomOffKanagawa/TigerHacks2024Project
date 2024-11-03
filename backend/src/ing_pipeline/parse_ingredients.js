@@ -76,7 +76,7 @@ function sanitizeIngredient(inge) {
     if (ing === match.food.toLowerCase()) {
       // If exact match
       //console.log(`Exact match with ${match.food}`)
-      return match.food.toLowerCase()
+      return [match.food.toLowerCase(), true]
     }
   }
 
