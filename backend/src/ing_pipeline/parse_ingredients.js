@@ -18,6 +18,7 @@ function simplifyIngredient(ingredient) {
     .replace(/\bof\b\s*/g, '')
     .replace(/\d+/g, '')
     .trim()
+  cleaned = cleaned.replace(/(\w+),.*/, '$1');
 
   // Remove any remaining numbers and extra spaces
   cleaned = cleaned.replace(/\d+/g, '').trim()
@@ -88,7 +89,7 @@ function sanitizeIngredient(inge) {
   const result = fuse.search(ing)
   if (!result.length) {
     console.log(ing + ' has no results')
-    return ing
+    return inge
   }
   //console.log(`Found ${result[0].item} through fuzzy search`)
   // console.log(result)
