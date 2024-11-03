@@ -6,7 +6,7 @@ import Login from '@/account/login'
 import RequireAuth from 'components/custom/RequireAuth'
 import RequireUnAuth from 'components/custom/RequireUnAuth'
 import About from '@/homepage/about'
-import BrowseRecipes from '@/browse/BrowseRecipes'
+import BrowseRecipes from '@/explore/ExploreRecipes'
 
 function App() {
   return (
