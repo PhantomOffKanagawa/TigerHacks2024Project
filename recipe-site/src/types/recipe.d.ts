@@ -44,16 +44,15 @@ export interface RecipeData {
     ingredient_groups: IngredientGroup[];
 }
 
-export interface sanitizedIngredient {
-    name: string;
-    ecoScore: number;
-    original?: string;
-    originalEcoScore?: number;
+export interface CarbonData {
+    // Emissions in kgCO2e/kg of ingredient
+    emissions: number;
+    // Carbon score of ingredient normalized to 100
+    score: number;
 }
 
 export interface Recipe extends RecipeData {
     id: string;
-    sanitizedIngredients: sanitizedIngredient[];
-    ecoScore?: number;
-    rating?: number;
+    carbonData: { [key: string]: CarbonData };
+    averageCarbonScore?: number;
 }
