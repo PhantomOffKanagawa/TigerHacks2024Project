@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import './App.css'
 import GaugeComponent from './Gauge'
 import { Button } from '@/components/ui/button'
@@ -62,6 +62,10 @@ function App() {
     })
   }, [])
   const isUrl = validUrls.some((url) => currentUrl?.includes(url) ?? false)
+  const ecoScore = useMemo(
+    () => 100 * (recipe.averageCarbonScore ?? 0),
+    [recipe?.averageCarbonScore],
+  )
 
   useEffect(() => {
     if (validUrls.some((url) => currentUrl?.includes(url)) && user) {
@@ -141,7 +145,7 @@ function App() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <GaugeComponent value={(recipe.averageCarbonScore ?? 0) * 100} />
+            <GaugeComponent value={ecoScore} />
             <div className='mt-4 space-y-2'>
               <div className='text-sm'>
                 <span className='font-semibold mb-2 block text-white'>
