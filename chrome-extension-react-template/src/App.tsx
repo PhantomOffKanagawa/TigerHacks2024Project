@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import smartTruncate from 'smart-truncate'
 import './App.css'
 import GaugeComponent from './Gauge'
 import { Button } from '@/components/ui/button'
@@ -65,6 +66,10 @@ function App() {
   const ecoScore = useMemo(
     () => 100 * (recipe.averageCarbonScore ?? 0),
     [recipe?.averageCarbonScore],
+  )
+  const truncatedDescription = useMemo(
+    () => smartTruncate(recipe.description, 120),
+    [recipe?.description],
   )
 
   useEffect(() => {
@@ -141,12 +146,14 @@ function App() {
           <CardHeader>
             <CardTitle className='text-white'>{recipe.title}</CardTitle>
             <CardDescription className='text-gray-300'>
-              {recipe.description}
+              {truncatedDescription}
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <GaugeComponent value={ecoScore} />
-            <div className='mt-4 space-y-2'>
+            <div className='-mt-7'>
+              <GaugeComponent value={ecoScore} />
+            </div>
+            <div className='mt-1 space-y-2'>
               <div className='text-sm'>
                 <span className='font-semibold mb-2 block text-white'>
                   Ingredient Scores:
@@ -164,10 +171,6 @@ function App() {
                       }
                     />
                   ))}
-              </div>
-              <div className='text-sm text-white'>
-                <span className='font-semibold'>Rating:</span> {recipe.ratings}
-                /5
               </div>
             </div>
           </CardContent>
