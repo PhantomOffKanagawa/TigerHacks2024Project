@@ -10,9 +10,9 @@ dotenv.config()
 const router = express.Router()
 
 router.post('/', async function (req, res) {
-  const { url, userId } = req.body
+  const { url } = req.body
 
-  if (!url || !userId) {
+  if (!url) {
     return res.status(400).send({ error: 'URL and userId are required' })
   }
 
@@ -34,12 +34,55 @@ router.post('/', async function (req, res) {
 
     let data = await response.json()
 
+      //   console.log('Need new data')
+      //   console.log(data)
+      const [carbonData, avg] = await getCarbonScoresByRecipe(data)
+      data['carbonData'] = carbonData
+      data['averageCarbonScore'] = avg
+      data['sanitizedIngredients'] = sanitizeIngredients(data.ingredients)
+
+
+    res.status(201).send({
+      message: 'Recipe analyzed successfully',
+      recipe: data
+    })
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error)
+    res.status(500).send({ error: 'Internal Server Error' })
+  }
+});
+
+router.post('/save', async function (req, res) {
+  const { url, userId } = req.body
+
+  if (!url || !userId) {
+    return res.status(400).send({ error: 'URL and userId are required' })
+  }
+
+  try {
+    const response = await fetch(process.env.RECIPE_SCRAPER_SERVICE_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ url }),
+    })
+
+    if (!response.ok) {
+      console.log('lambda req failed', url)
+      return res
+          .status(response.status)
+          .send({ error: 'Failed to fetch data from the external API.' })
+    }
+
+    let data = await response.json()
+
     let recipeRef
     const recipeQuery = await db
-      .collection('recipes')
-      .where('canonical_url', '==', data.canonical_url)
-      .limit(1)
-      .get()
+        .collection('recipes')
+        .where('canonical_url', '==', data.canonical_url)
+        .limit(1)
+        .get()
 
     if (!recipeQuery.empty) {
       console.log('not empty')
@@ -70,7 +113,7 @@ router.post('/', async function (req, res) {
     console.error('There was a problem with the fetch operation:', error)
     res.status(500).send({ error: 'Internal Server Error' })
   }
-})
+});
 
 router.get('/user/:userID', async (req, res) => {
   const { userID } = req.params
