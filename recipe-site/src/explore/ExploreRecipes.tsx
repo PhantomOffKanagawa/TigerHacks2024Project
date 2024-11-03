@@ -9,13 +9,14 @@ import { ErrorDisplay } from '@/components/custom/error'
 import { Header } from '@/components/custom/header'
 import { ExtensionBanner } from 'components/custom/ExtensionBanner'
 import { useAuth } from '@/contexts/AuthContext'
+import { Button } from 'components/ui/button'
 
 const ExploreRecipes: FC = () => {
   const { user } = useAuth()
 
   const recipeData = useRecipes(user?.uid ?? '', undefined, true)
   const { recipes } = recipeData
-  const { loading, error, refreshRecipes } = recipeData
+  const { loading, error, refreshRecipes, loadNextPage } = recipeData
   console.log({ recipes })
 
   // recipes = recipes.filter((recipe) => recipe.hasOwnProperty('carbonData'))
@@ -34,7 +35,7 @@ const ExploreRecipes: FC = () => {
       <Header />
       <div className='max-w-7xl mx-auto py-12 px-6'>
         <h1 className='text-4xl text-center font-bold text-white mb-12 mx-auto'>
-          Browse Recipes
+          Explore Recipes
         </h1>
         {recipes.length == 0 ? (
           <div className='text-white text-center text-2xl'>
@@ -79,6 +80,12 @@ const ExploreRecipes: FC = () => {
           </div>
         )}
       </div>
+      {recipes.length % 9 === 0 && (
+        <Button onClick={loadNextPage} disabled={loading} className='w-full'>
+          Load more
+        </Button>
+      )}
+      <div className='h-20' />
     </div>
   )
 }
