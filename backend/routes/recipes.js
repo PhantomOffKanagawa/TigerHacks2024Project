@@ -99,6 +99,7 @@ router.post('/save', async function (req, res) {
       if (Object.keys(carbonData).length === 0 || avg === 0) {
         return res.status(400).send({ error: 'Failed to get carbon data'})
       }
+      console.log(data)
       await recipeRef.set(data)
     }
 
