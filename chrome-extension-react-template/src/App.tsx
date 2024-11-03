@@ -142,36 +142,6 @@ function App() {
     }
   }, [currentUrl, validUrls, user])
 
-  // if (isUrl && first) {
-  //   fetch(
-  //     'https://scgcplb7osrk65nbxgnzp43cz40jekxj.lambda-url.us-east-2.on.aws/',
-  //     {
-  //       method: 'POST',
-  //       body: JSON.stringify({
-  //         url: currentUrl,
-  //       }),
-  //     },
-  //   )
-  //     .then((res) => {
-  //       if (!res.ok) {
-  //         throw new Error(`HTTP error! status: ${res.status}`)
-  //       }
-  //       return res.json()
-  //     })
-  //     .then((data) => {
-  //       console.log(data)
-  //       first = false
-  //       setRecipe(data)
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error fetching recipe:', error)
-  //     })
-  // }
-
-  // setTimeout(() => {
-  //   setIsLoading(!isLoading)
-  // }, 1000)
-
   console.log(recipe.averageCarbonScore)
   return (
     <Card className='w-[400px] h-[600px] overflow-hidden relative rounded-none p-0 border-0 shadow-none bg-background'>
