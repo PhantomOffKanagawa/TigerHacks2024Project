@@ -25,15 +25,23 @@ export const signUpWithEmail = (email: string, password: string) => {
 };
 
 // Sign out
-export const signOutApp = () => {
-    return signOut(auth);
+export const signOutApp = async () => {
+    try {
+        await signOut(auth);
+        localStorage.removeItem("userId");
+    } catch (error) {
+        console.error('Error signing out:', error);
+    }
 }
 
 // Listen for authentication state to change
 onAuthStateChanged(auth, (user) => {
     if (user) {
+        const userId = user.uid;
+        localStorage.setItem("userId", userId);
         console.log('User is signed in:', user);
     } else {
+        localStorage.removeItem("userId");
         console.log('User is signed out');
     }
 });
