@@ -12,16 +12,22 @@ export default async function getCarbonScoresByRecipe(recipe) {
 
   console.log(`Raw ingredients: ${JSON.stringify(ingredients)}`)
 
-  const sanitized = sanitizeIngredients(ingredients)
+  const sanitizedMatch = sanitizeIngredients(ingredients)
 
   //console.log('Sanitized ingredients')
   //console.log(sanitized)
   //sanitized.push('lamb meat')
 
-  const carbonData = sanitized.reduce((acc, curr) => {
-    acc[curr] = { emissions: getCarbonScore(curr) }
+  const carbonData = sanitizedMatch.reduce((acc, curr) => {
+    const [sanit, succ] = curr
+    if (succ) {
+      acc[sanit] = { emissions: getCarbonScore(sanit) }
+    } else {
+      acc[sanit] = -1
+    }
     return acc
   }, {})
+
   //const carbonData = sanitized.map(ingredient => ({[ingredient]: {carbonScore: getCarbonScore(ingredient)}}))
 
   //const carbonData = sanitized

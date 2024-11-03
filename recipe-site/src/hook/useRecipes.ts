@@ -26,7 +26,7 @@ export const useRecipes = (
       setLoading(true);
       setError(null);
 
-      fetch("https://leangreen.club/api/recipes/user/" + userId, {
+      fetch(import.meta.env.VITE_API_ENDPOINT.concat("/recipes/user/") + userId, {
         method: "GET",
       })
         .then((res) => {
@@ -62,7 +62,7 @@ export const useRecipes = (
       setLoading(true);
       setError(null);
 
-      fetch("https://leangreen.club/api/recipes/id/" + recipeId, {
+      fetch(import.meta.env.VITE_API_ENDPOINT.concat("/recipes/id/") + recipeId, {
         method: "GET",
       })
         .then((res) => {

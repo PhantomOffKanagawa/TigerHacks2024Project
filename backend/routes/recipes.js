@@ -39,7 +39,7 @@ router.post('/', async function (req, res) {
       const [carbonData, avg] = await getCarbonScoresByRecipe(data)
       data['carbonData'] = carbonData
       data['averageCarbonScore'] = avg
-      data['sanitizedIngredients'] = sanitizeIngredients(data.ingredients)
+      data['sanitizedIngredients'] = sanitizeIngredients(data.ingredients).map(i => i[0])
 
 
     res.status(201).send({
@@ -95,10 +95,11 @@ router.post('/save', async function (req, res) {
       const [carbonData, avg] = await getCarbonScoresByRecipe(data)
       data['carbonData'] = carbonData
       data['averageCarbonScore'] = avg
-      data['sanitizedIngredients'] = sanitizeIngredients(data.ingredients)
-      if (Object.keys(carbonData).length === 0 || averageCarbonScore === 0) {
+      data['sanitizedIngredients'] = sanitizeIngredients(data.ingredients).map(i => i[0])
+      if (Object.keys(carbonData).length === 0 || avg === 0) {
         return res.status(400).send({ error: 'Failed to get carbon data'})
       }
+      console.log(data)
       await recipeRef.set(data)
     }
 
@@ -216,5 +217,50 @@ router.get('/substitutions/:userId/:recipeId', async function (req, res) {
     res.status(500).send({ error: 'Internal Server Error' })
   }
 });
+
+router.get('/all', async function (req, res) {
+  try {
+    // Parse page number from query parameters (default to page 1)
+    const page = parseInt(req.query.p) || 1;
+
+    // Set pagination parameters
+    const pageSize = 3;
+    let lastVisible = null;
+
+    // Reference the recipes collection
+    const recipesRef = db.collection('recipes');
+
+    // Query to order by ID and limit to pageSize
+    let recipesQuery = recipesRef.orderBy('title').limit(pageSize);
+
+    if (page > 1) {
+      const skipQuery = recipesRef.orderBy('title').limit((page - 1) * pageSize);
+      const skipSnapshot = await skipQuery.get();
+
+      // Check if we have enough documents for pagination
+      if (skipSnapshot.docs.length < (page - 1) * pageSize) {
+        return res.status(404).json({ error: 'Page not found' });
+      }
+
+      // Set `lastVisible` to the last document from the skip query
+      const lastVisible = skipSnapshot.docs[skipSnapshot.docs.length - 1];
+      recipesQuery = recipesRef.orderBy('title').startAfter(lastVisible).limit(pageSize);
+    }
+
+
+    // Get documents from the updated query
+    const recipeSnapshot = await recipesQuery.get();
+    const recipes = recipeSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    res.status(200).json({
+      page,
+      recipes
+    });
+  } catch (error) {
+    console.error('Error fetching all recipes:', error)
+    res.status(500).send({ error: 'Internal Server Error' })
+  }
+  
+})
 
 export default router

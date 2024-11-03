@@ -61,7 +61,7 @@ function sanitizeIngredient(inge) {
   const val = tallies[0].matches
   if (val === 0) {
     //console.log(ing + ' not found!')
-    return null
+    return [ing, false]
   }
   const maxes = [tallies[0]]
   //console.log(`maxes: ${JSON.stringify(maxes)}`)
@@ -76,7 +76,7 @@ function sanitizeIngredient(inge) {
     if (ing === match.food.toLowerCase()) {
       // If exact match
       //console.log(`Exact match with ${match.food}`)
-      return match.food.toLowerCase()
+      return [match.food.toLowerCase(), true]
     }
   }
 
@@ -89,11 +89,11 @@ function sanitizeIngredient(inge) {
   const result = fuse.search(ing)
   if (!result.length) {
     console.log(ing + ' has no results')
-    return inge
+    return [ing, false]
   }
   //console.log(`Found ${result[0].item} through fuzzy search`)
   // console.log(result)
-  return result[0].item
+  return [result[0].item, true]
 }
 
 export default function sanitizeIngredients(ings) {
