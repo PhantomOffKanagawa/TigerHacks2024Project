@@ -38,7 +38,7 @@ export const ErrorDisplay: FC<ErrorDisplayProps> = ({ message, onRetry, redirect
       {onRetry && (
         <Button 
           onClick={onRetry}
-          className="mt-4 bg-red-500 hover:bg-red-600"
+          className="mt-4 bg-red-500/30 hover:bg-red-600/30 block mx-auto"
         >
           Try Again
         </Button>
@@ -46,7 +46,7 @@ export const ErrorDisplay: FC<ErrorDisplayProps> = ({ message, onRetry, redirect
           {redirect && (
             <Button 
               onClick={() => navigate(redirect.path)}
-              className="mt-4 bg-red-500 hover:bg-red-600"
+              className="mt-4 bg-emerald-500/30 hover:bg-emerald-600/30 block mx-auto"
             >
               {redirect.message}
             </Button>

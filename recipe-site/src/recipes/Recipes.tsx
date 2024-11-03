@@ -43,22 +43,22 @@ const RecipeList: FC = () => {
             {recipes.map((recipe) => (
               <Card
                 key={recipe.canonical_url}
-                className="bg-card p-6 rounded-lg"
+                className="bg-card p-6 rounded-lg flex flex-col"
               >
-                <img className="bg-gray-700/10 w-full h-[150px] rounded-lg" src={recipe.image} alt={recipe.title} />
-                <div className="space-y-4 py-2">
+                <img className="bg-gray-700/10 w-full h-[250px] rounded-lg object-cover" src={recipe.image} alt={recipe.title} />
+                <div className="space-y-4 py-2 flex-1 flex flex-col">
                   <Link to={`/recipes/${recipe.id}`}>
                     <h2 className="text-xl font-semibold text-white underline">
                       {recipe.title}
                     </h2>
                   </Link>
-                  <p className="text-gray-400">{recipe.description}</p>
-                  <div className="flex justify-between items-center">
+                  <p className="text-gray-400 flex-grow">{recipe.description}</p>
+                  <div className="flex justify-between items-center mt-auto">
                     {recipe.averageCarbonScore && (
                       <div className="flex items-center space-x-2">
                         <span className="text-sm text-gray-400">Carbon Score</span>
                         <span className="text-green-400">
-                          {recipe.averageCarbonScore.toFixed(2)}
+                          {Math.round(recipe.averageCarbonScore * 100)}
                         </span>
                       </div>
                     )}
