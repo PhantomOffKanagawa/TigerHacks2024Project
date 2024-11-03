@@ -1,4 +1,4 @@
-import { FC, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 
@@ -22,48 +22,88 @@ import {
 } from "@/utils/substitutions.utils";
 import { useAuth } from "@/contexts/AuthContext";
 
+import { co2Data } from "@/data/co2_data";
+import { substitutions } from "@/data/substitutions";
+
 const RecipeDetail: FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { recipe, loading, error, setError, refreshRecipe } = useRecipes(
-    user?.uid || "",
-    id
-  );
-  // const [showSubstitutes, setShowSubstitutes] = useState(false);
-  // const [ingredientToSubstitute, setIngredientToSubstitute] = useState(null);
+  const {
+    recipe,
+    loading,
+    error,
+    setError,
+    refreshRecipe,
+    refreshSubstitutions,
+    setRecipeSubstitutions,
+    substitutions,
+  } = useRecipes(user?.uid || "", id);
+
+  const [showSubstitutes, setShowSubstitutes] = useState(false);
+  const [ingredientToSubstituteIndex, setIngredientToSubstituteIndex] = useState(-1);
+  const [specificSubstitutions, setSpecificSubstitutions] = useState(null);
+
+  const returnSubstitutionButton = (index: number) => {
+    const ingredient = ingredientData[index];
+
+    if (ingredient.score == -1) return null;
+
+    if (!hasSubstitutions(ingredient.match)) return (
+      <div className="text-gray-400 text-lg">
+        {Math.round(ingredient.score * 100)}
+      </div>
+    );
+
+    console.log("matched");
+
+    return (
+      <Button variant="ghost" className="text-gray-400 underline text-lg p-0 h-[28px]" onClick={() => openSubstitutions(ingredient, index)}>
+        {Math.round(ingredient.score * 100)}
+      </Button>
+    );
+  };
+
+  const openSubstitutions = (ingredient: any, index: number) => {
+    setIngredientToSubstituteIndex(index);
+    setShowSubstitutes(true);
+    const options = getSubstitutions(ingredient.match, ingredient.substitution);
+    setSpecificSubstitutions(options as any);
+  }
 
   const ecoClasses = (score: number) => {
-    if (score >= 70) return (
-      <div className="w-full flex items-center space-x-2 p-3 rounded-lg shadow-lg bg-green-900 border border-green-800/30 sticky top-2 bottom-2 z-10">
-      <span className="text-sm text-gray-300 font-medium">Eco Score</span>
-      <div className="flex items-center gap-1">
-        <span className="text-2xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
-          {score}
-        </span>
-        <span className="text-gray-400 font-medium">/100</span>
-      </div>
-      <div className="ml-2">
-        <div className="w-3 h-3 rounded-full bg-green-400 animate-pulse animate-pulse-slow" />
-      </div>
-    </div>
-    );
-    if (score >= 30) return (
-      <div className="w-full flex items-center space-x-2 p-3 rounded-lg shadow-lg bg-yellow-900 border border-yellow-800/30 sticky top-2 bottom-2 z-10">
-      <span className="text-sm text-gray-300 font-medium">Eco Score</span>
-      <div className="flex items-center gap-1">
-        <span className="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-amber-400 bg-clip-text text-transparent">
-          {score}
-        </span>
-        <span className="text-gray-400 font-medium">/100</span>
-      </div>
-      <div className="ml-2">
-        <div className="w-3 h-3 rounded-full bg-yellow-400 animate-pulse animate-pulse-fast" />
-      </div>
-    </div>
-    );
+    if (score >= 70)
+      return (
+        <div className="w-full flex items-center space-x-2 p-3 rounded-lg shadow-lg bg-green-900 border border-green-800/30 sticky top-2 bottom-2 z-10">
+          <span className="text-sm text-gray-300 font-medium">Eco Score</span>
+          <div className="flex items-center gap-1">
+            <span className="text-2xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
+              {score}
+            </span>
+            <span className="text-gray-400 font-medium">/100</span>
+          </div>
+          <div className="ml-2">
+            <div className="w-3 h-3 rounded-full bg-green-400 animate-pulse animate-pulse-slow" />
+          </div>
+        </div>
+      );
+    if (score >= 30)
+      return (
+        <div className="w-full flex items-center space-x-2 p-3 rounded-lg shadow-lg bg-yellow-900 border border-yellow-800/30 sticky top-2 bottom-2 z-10">
+          <span className="text-sm text-gray-300 font-medium">Eco Score</span>
+          <div className="flex items-center gap-1">
+            <span className="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-amber-400 bg-clip-text text-transparent">
+              {score}
+            </span>
+            <span className="text-gray-400 font-medium">/100</span>
+          </div>
+          <div className="ml-2">
+            <div className="w-3 h-3 rounded-full bg-yellow-400 animate-pulse animate-pulse-fast" />
+          </div>
+        </div>
+      );
     return (
-        <div className="w-full flex items-center space-x-2 p-3 rounded-lg shadow-lg bg-red-900 border border-red-800/30 sticky top-2 bottom-2 z-10">
+      <div className="w-full flex items-center space-x-2 p-3 rounded-lg shadow-lg bg-red-900 border border-red-800/30 sticky top-2 bottom-2 z-10">
         <span className="text-sm text-gray-300 font-medium">Eco Score</span>
         <div className="flex items-center gap-1">
           <span className="text-2xl font-bold bg-gradient-to-r from-red-400 to-rose-400 bg-clip-text text-transparent">
@@ -75,35 +115,40 @@ const RecipeDetail: FC = () => {
           <div className="w-3 h-3 rounded-full bg-red-400 animate-pulse animate-pulse-faster" />
         </div>
       </div>
-      );
+    );
   };
 
   // Move data processing into useMemo - always declare it, even if recipe is null
-  const ingredientData = useMemo(() => {
+  let ingredientData = useMemo(() => {
+    console.log("hi");
     if (!recipe) return [];
     if (recipe.carbonData == null) {
       setError(new Error("No carbon data found"));
       return [];
     }
-
+  
     if (recipe.sanitizedIngredients == null) {
       setError(new Error("No sanitized ingredients found"));
       return [];
     }
-
+  
     console.log(recipe);
-
+  
     const ingredients = recipe.ingredients;
     const sanitizedIngredients = recipe.sanitizedIngredients;
-
+  
+    
     return sanitizedIngredients.map((ingredient, index) => ({
       name: ingredients[index],
       sanitizedName: ingredient,
       score: recipe.carbonData[ingredient].score,
-      substitution: null,
-      substitutionScore: -1,
+      match: recipe.carbonData[ingredient].match,
+      substitution: substitutions ? substitutions[index] : null,
+      substitutionScore: substitutions
+        ? substitutions[index] != null ? co2Data[substitutions[index] as keyof typeof co2Data] : -1
+        : -1,
     }));
-  }, [recipe]);
+  }, [recipe, substitutions, setError]); // Added substitutions to dependency array
 
   const carbonScore = useMemo(() => {
     let count = 0;
@@ -116,6 +161,11 @@ const RecipeDetail: FC = () => {
         100
     );
   }, [recipe]);
+
+  const currentIngredientScore = useMemo(() => {
+    if (ingredientToSubstituteIndex == -1) return -1;
+    return ingredientData[ingredientToSubstituteIndex].substitutionScore != -1 ? ingredientData[ingredientToSubstituteIndex].substitutionScore : ingredientData[ingredientToSubstituteIndex].score;
+  }, [ingredientData, ingredientToSubstituteIndex]);
 
   if (loading) {
     return (
@@ -143,7 +193,7 @@ const RecipeDetail: FC = () => {
         onRetry={() => refreshRecipe(id || "")}
         redirect={{
           path: "/recipes",
-          message: "Go to Recipes"
+          message: "Go to Recipes",
         }}
       />
     );
@@ -161,6 +211,19 @@ const RecipeDetail: FC = () => {
   if (!recipe) return null;
 
   const substituteIngredient = (index: number, sub: any) => {
+    setShowSubstitutes(false);
+    const newSubstitutions = substitutions ? [...substitutions] : Array(ingredientData.length).fill(null);
+    if (sub.name == ingredientData[index].match) {
+      newSubstitutions[index] = null;
+      ingredientData[index].substitution = null;
+      ingredientData[index].substitutionScore = -1;
+    } else {
+      newSubstitutions[index] = sub.name;
+      ingredientData[index].substitution = sub.name;
+      ingredientData[index].substitutionScore = sub.score;
+    }
+    setRecipeSubstitutions(id || "", newSubstitutions as any);
+
     // if (!recipe.carbonData[index].original) {
     //   recipe.sanitizedIngredients[index].original =
     //     recipe.sanitizedIngredients[index].name;
@@ -175,35 +238,100 @@ const RecipeDetail: FC = () => {
   return (
     <div className="bg-background min-h-screen">
       <Header />
+
+      {/* Dialog to be used for substitutions */}
+      {ingredientToSubstituteIndex != -1 && (
+      <Dialog open={showSubstitutes} onOpenChange={setShowSubstitutes}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-md">Substituting {ingredientData[ingredientToSubstituteIndex].name}</DialogTitle>
+            <DialogDescription className="text-xs">
+              Choose a more eco-friendly alternative
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            {specificSubstitutions && (
+              <div className="space-y-4">
+                {specificSubstitutions.map((sub: any) => (
+                  <div
+                    key={`substitution-${sub.name}`}
+                    className="flex items-center justify-between hover:bg-gray-700/10 rounded"
+                  >
+                    <span>{sub.name}</span>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`${sub.score > currentIngredientScore ? "text-green-500" : "text-red-500"}`}
+                      >
+                        {sub.score > currentIngredientScore
+                          ? "↑"
+                          : "↓"}
+                        {Math.round(Math.abs(
+                          (sub.score  -
+                            currentIngredientScore) * 100
+                        ))}
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => substituteIngredient(ingredientToSubstituteIndex, sub)}
+                      >
+                        Use This
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
       <div className="max-w-4xl mx-auto py-12 px-6">
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/recipes")}
           className="mb-6 text-gray-400 hover:text-white transition-colors"
         >
           ← Back to Recipes
         </button>
 
         <Card className="p-8 rounded-lg">
-          <a href={recipe.canonical_url} target="_blank" rel="noopener noreferrer">
+          <a
+            href={recipe.canonical_url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <div className="flex flex-col">
               <h1 className="text-4xl font-bold text-white mb-2 font-display hover:text-gray-300 transition-colors flex items-start">
                 {recipe.title}
-                  <span className="ml-4 mt-[-2px] text-gray-500 text-sm">
-                    <svg className="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
+                <span className="ml-4 mt-[-2px] text-gray-500 text-sm">
+                  <svg
+                    className="w-4 h-4 inline"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                    />
+                  </svg>
                 </span>
               </h1>
               {recipe.canonical_url && (
                 <span className="text-sm text-gray-400 mb-4">
-                from {new URL(recipe.canonical_url).hostname.replace('www.', '')}
-              </span>
+                  from{" "}
+                  {new URL(recipe.canonical_url).hostname.replace("www.", "")}
+                </span>
               )}
             </div>
           </a>
           <div className="space-y-6">
             <img
-              className="aspect-video bg-gray-700/20 rounded-lg"
+              className="aspect-video bg-gray-700/20 rounded-lg object-cover"
               src={recipe.image}
               alt={recipe.title}
             />
@@ -239,9 +367,7 @@ const RecipeDetail: FC = () => {
 
             <p className="text-gray-300">{recipe.description}</p>
 
-            {recipe.carbonData && (
-              ecoClasses(carbonScore)
-            )}
+            {recipe.carbonData && ecoClasses(carbonScore)}
 
             <div>
               <h2 className="text-2xl font-semibold text-white mb-3">
@@ -250,17 +376,11 @@ const RecipeDetail: FC = () => {
               <ul className="list-disc list-inside text-gray-300">
                 {ingredientData.map((ingredient, index) => (
                   <div key={`ingredient-${index}`}>
-                    <li
-                      className="flex items-start space-x-2 my-1"
-                    >
+                    <li className="flex items-start space-x-2 my-1">
                       <Checkbox className="text-green-400 me-2 my-auto" />
-                      {ingredient.name}
+                      <span className="self-center">{ingredient.substitution ? `${ingredient.substitution} (substituted for ${ingredient.name})` : ingredient.name}</span>
                       <div className="flex-1"></div>
-                      <div className="text-gray-400">
-                        {ingredient.score != -1
-                          ? Math.round(ingredient.score * 100)
-                          : ""}
-                      </div>
+                      {returnSubstitutionButton(index)}
                     </li>
                     <hr className="my-1 border-white/30 border-dashed border-t" />
                   </div>
@@ -268,7 +388,6 @@ const RecipeDetail: FC = () => {
 
                 {/* TODO: Animate the eco score */}
                 <div className="flex justify-between w-full items-center">
-
                   {/* {recipe.rating && (
                 <div className="flex items-center space-x-2">
                   <span className="text-sm text-gray-400">Rating</span>
@@ -380,7 +499,7 @@ const RecipeDetail: FC = () => {
               <ol className="list-decimal list-inside text-gray-300">
                 {recipe.instructions_list.map(
                   (instruction: string, index: number) => (
-                    <li key={index}>{instruction}</li>
+                    <li key={`instruction-${index}`}>{instruction}</li>
                   )
                 )}
               </ol>

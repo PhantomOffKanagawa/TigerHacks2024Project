@@ -25,8 +25,12 @@ const Auth: React.FC<{ defaultSignUp?: boolean }> = ({ defaultSignUp = false }) 
           setLoading(false);
           return;
         }
-        await signUpWithEmail(email, password);
-        console.log("Registration successful");
+        try {
+          await signUpWithEmail(email, password);
+          console.log("Registration successful");
+        } catch (err) {
+          setError("An unexpected error occurred. Please try again.");
+        }
       } else {
         await signInWithEmail(email, password);
         console.log("Sign-in successful");

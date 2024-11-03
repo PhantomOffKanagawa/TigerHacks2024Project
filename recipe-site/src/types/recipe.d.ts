@@ -49,6 +49,8 @@ export interface CarbonData {
     emissions: number;
     // Carbon score of ingredient normalized to 100
     score: number;
+    // Name of the ingredient in the database
+    match: string;
 }
 
 export interface Recipe extends RecipeData {
@@ -57,3 +59,5 @@ export interface Recipe extends RecipeData {
     averageCarbonScore: number;
     sanitizedIngredients: string[];
 }
+
+export type Substitutions = string[];
