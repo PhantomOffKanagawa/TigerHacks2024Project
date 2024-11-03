@@ -1,12 +1,19 @@
 import { FC } from 'react';
 import { Button } from '@/components/ui/button';
 import { Header } from '@/components/custom/header';
+import { useNavigate } from 'react-router-dom';
 interface ErrorDisplayProps {
   message: string;
   onRetry?: () => void;
+  redirect?: {
+    path: string;
+    message: string;
+  };
 }
 
-export const ErrorDisplay: FC<ErrorDisplayProps> = ({ message, onRetry }) => (
+export const ErrorDisplay: FC<ErrorDisplayProps> = ({ message, onRetry, redirect }) => {
+  const navigate = useNavigate();
+  return (
   <div className="h-screen w-screen bg-background">
       <Header />
       <div className="flex items-center justify-center min-h-[80vh]">
@@ -35,8 +42,17 @@ export const ErrorDisplay: FC<ErrorDisplayProps> = ({ message, onRetry }) => (
         >
           Try Again
         </Button>
-        )}
+          )}
+          {redirect && (
+            <Button 
+              onClick={() => navigate(redirect.path)}
+              className="mt-4 bg-red-500 hover:bg-red-600"
+            >
+              {redirect.message}
+            </Button>
+          )}
+      </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
