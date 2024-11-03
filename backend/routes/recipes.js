@@ -166,4 +166,52 @@ router.get('/id/:recipeId', async (req, res) => {
   }
 });
 
+router.post('/substitutions', async function (req, res) {
+  const { userId, recipeId, substitutions } = req.body;
+
+  if (!userId || !recipeId || !substitutions) {
+    return res.status(400).send({ error: 'userId, recipeId, and substitutions are required' })
+  }
+
+  try {
+    const substitutionRef = db.collection('substitutions').doc(`${userId}_${recipeId}`);
+
+    await substitutionRef.set({
+      userId,
+      recipeId,
+      substitutions
+    }, { merge: true });
+
+    res.status(201).send({
+      message: 'Substitution saved successfully'
+    })
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error)
+    res.status(500).send({ error: 'Internal Server Error' })
+  }
+});
+
+router.get('/substitutions/:userId/:recipeId', async function (req, res) {
+  const { userId, recipeId } = req.params;
+
+  try {
+    let substitutionsQuery = await db.collection('substitutions').doc(`${userId}_${recipeId}`).get();
+    const data = substitutionsQuery.data()
+    console.log(substitutionsQuery.data());
+    if (data) {
+      res.status(201).send({
+        message: 'Substitution Found',
+        data: data
+      })
+    } else {
+      res.status(200).send({
+        message: 'Substitution Not Found',
+      })
+    }
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error)
+    res.status(500).send({ error: 'Internal Server Error' })
+  }
+});
+
 export default router
