@@ -1,15 +1,5 @@
 {
-  "manifest_version": 3,
   "name": "Lean Green",
-  "version": "1.0.0",
-  "description": "A companion for your green, eco-friendly kitchen",
-  "action": {
-    "default_popup": "index.html"
-  },
-  "permissions": ["identity", "offscreen", "tabs", "activeTab", "storage"],
-  "content_security_policy": {
-      "extension_pages": "script-src 'self'; object-src 'self'"
-  },
   "short_name": "Lean Green",
   "icons": [
     {

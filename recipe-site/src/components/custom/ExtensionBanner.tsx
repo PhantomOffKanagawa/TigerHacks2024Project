@@ -9,6 +9,13 @@ export const ExtensionBanner: FC<{ dismissable: boolean }> = ({
 
   if (!isVisible) return null
 
+  const isChrome = (navigator.userAgent.indexOf("Chrome") != -1);
+  const isEdge = (navigator.userAgent.indexOf("Edge") != -1);
+
+  if (!isChrome && !isEdge) {
+    return null;
+  }
+
   if (dismissable) {
     if (localStorage.getItem('extensionBannerDismissed') === 'true') {
       return null
@@ -20,7 +27,7 @@ export const ExtensionBanner: FC<{ dismissable: boolean }> = ({
           <p className='text-sm text-primary'>
             📦 Get our Chrome extension to save recipes from anywhere!{' '}
             <a
-              // TODO: Add extension ID
+                // TODO: Add Chrome Store Link
               href='/leangreen-extension.zip'
               target='_blank'
               rel='noopener noreferrer'
